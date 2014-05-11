@@ -1,0 +1,92 @@
+\usepackage{hyperref}
+\usepackage{longtable,tabularx,threeparttable}
+\usepackage[dvipsnames,svgnames,table,hyperref]{xcolor}
+\usepackage{textcomp}
+\usepackage{url,listings}
+\usepackage{fancybox}
+
+\lstset{language=C++,
+        basicstyle=\ttfamily\small,
+        keywordstyle=\color{Maroon},
+        commentstyle=\color{Blue}, 
+        stringstyle=\color{Green},
+        showstringspaces=false}
+
+\begin{document}
+
+\title{Extending Smart-Snmpd}
+
+\author{Jens Rehsack}
+
+\date{\today{}}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+\subsection{Audience}
+
+This document targets developers or operators (DevOps) who have to
+cover a wider range of metrics via smart-snmpd.
+
+To learn how to instruct smart-snmpd to deliver the new metrics,
+refer to the ''Operation Guide for Smart-Snmpd'' in the OPERATION
+document.
+
+\section{Extensibility}
+
+\subsection{External Executables}
+
+Smart-snmpd comes with support to read metrics from the output of external
+executables. The executable is called in a configured interval and the
+delivered output is placed below the oid ".100" under the configured
+root oid of the external command.
+
+How external command MIBs can be configured is described in the section
+''Setting up External Command MIBs'' in the ''Operation Guide for
+Smart-Snmpd''.
+
+\subsubsection{Interaction between External Command and Agent}
+
+The smart-snmpd will execute the configured command as configured without
+passing the command line to a shell. It's guaranteed that the smart-snmpd
+runs the same command once only. The same command means, each configured
+external command. Defining several external MIBs using the identical
+external command results from the agent's perspective in different commands.
+The guarantee is limited that the command X is not executed again before
+it finishes the running one.
+
+The smart-snmpd observes the \texttt{stdout}, \texttt{stderr},
+\texttt{exit code} and \texttt{exit signal} of each executed process.
+It sets timestamps for each execution start, end and successful MIB update.
+
+Please refer to SMART-SNMP-MIB distributed with smart-snmpd to learn the
+oids how the observed metrics are made checkable.
+
+\subsubsection{Data Format}
+
+Smart-snmpd expects the external command writes a list of three-piece-tuples
+in JavaScript Object Notation (JSON).
+
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+[
+[ '.1', 4, 'Hello world' ],
+[ '.2', 2, 42 ]
+]
+\end{lstlisting}
+
+The delivered oids must not include the base oids.
+
+\subsection{Agent eXtensibility Protocol (AgentX)}
+
+Allowing smart-snmpd being extended via sub-agents using the AgentX protocol
+is a future task.
+
+\subsection{Dynamic Libraries}
+
+Allowing smart-snmpd being extended via external shared libraries
+is a future task.
+
+\end{document}

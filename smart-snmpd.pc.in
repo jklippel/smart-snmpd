@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+modules=@WITH_MODULES@
+
+Name: smart-snmpd
+Version: @VERSION@
+Description: Multi-Threaded snmpd for system statistic monitoring
+Requires:
+Libs:
+Libs.private: @LIBS@
+Cflags: -I${includedir} @CFLAGS@

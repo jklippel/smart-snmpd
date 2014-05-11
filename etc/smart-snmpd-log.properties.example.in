@@ -1,0 +1,17 @@
+log4cplus.logger.snmp++=WARN, LogFile
+log4cplus.logger.agent++=WARN, LogFile
+log4cplus.logger.smartsnmpd=INFO, LogFile
+log4cplus.logger.statgrab=WARN, LogFile
+
+# can be enabled when using log4cplus 1.1.0 or higher
+#log4cplus.appender.AsyncLogFile=log4cplus::AsyncAppender
+#log4cplus.appender.AsyncLogFile.Appender=log4cplus::FileAppender
+#log4cplus.appender.AsyncLogFile.QueueLimit=1024
+#log4cplus.appender.AsyncLogFile.Appender.File=@log-file-path@
+#log4cplus.appender.AsyncLogFile.Appender.layout=log4cplus::TTCCLayout
+#log4cplus.appender.AsyncLogFile.Appender.Append=true
+
+log4cplus.appender.LogFile=log4cplus::FileAppender
+log4cplus.appender.LogFile.File=@log-file-path@
+log4cplus.appender.LogFile.layout=log4cplus::TTCCLayout
+log4cplus.appender.LogFile.Append=true

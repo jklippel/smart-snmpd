@@ -1,0 +1,24 @@
+Smart-SNMPd
+Copyright 2010-2011 Jens Rehsack & Matthias Haag
+
+This product includes software developed by the
+Smart-SNMPd Team (http://www.smart-snmpd.org/).
+
+This software depends on other pieces of open source software
+mentioned in the INSTALL document.
+
+This software contains code derived from snmp++ and agent++
+libraries developed by Frank Fock and Jochen Katz derived
+from work from Hewlett Packard.
+
+This software contains code derived from the log4cplus
+library developed by Tad E. Smith, currenly maintained and
+further developed by Václav Haisman.
+
+JSON parsing support is provided by the libjson library, which
+is open source software covered by the LGPLv2 license, written
+and maintained by Vincent Hanquez. The original software is
+available from
+  http://projects.snarc.org/ and
+  http://github.com/vincenthz/libjson
+

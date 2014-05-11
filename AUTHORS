@@ -1,0 +1,12 @@
+Authors of the Smart SNMP Daemon
+================================
+
+Idea:   - Matthias Haag
+
+MIB Design:
+        - Matthias Haag
+        - Stefan Fischer
+        - Jens Rehsack <sno@NetBSD.org>
+
+Development:
+        - Jens Rehsack <sno@NetBSD.org>

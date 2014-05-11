@@ -1,0 +1,187 @@
+// Smart-SNMPd example config file
+
+port = 161
+
+status-file = @localstatedir@/db/smart-snmpd/status.db
+
+@su-if@su-cmd = "@SU_CMD@"
+@su-if@su-args = @SU_ARGS@
+
+// how many request-threads shall run
+// 0 means disable thread-pool (not recommended, use with caution)
+@if-threadpool@job-threads = 32
+
+rlimits {
+    core = "unlimited"
+    files = 1024
+}
+
+on-fatal = kill
+
+/**
+ * Valid names for mib objects (and derived inr- and extobjects):
+ *
+ * - DaemonStatus
+ * - HostInfo
+ * - CpuUsage
+ * - MemoryUsage
+ * - SystemLoad
+ * - UserLogins
+ * - ProcessStatus
+ * - FileSystemUsage
+ * - DiskIO
+ * - NetworkIO
+ * - SwapIO
+ * - AppMonitoring
+ */
+
+mibobject DaemonStatus {
+    async-update = true
+}
+
+inrobject CpuUsage {
+    async-update = true // strongly recommended for interval monitoring
+    cache-timeout = 30
+    mr-interval = 600
+}
+
+mibobject MemoryUsage {
+    async-update = true
+}
+
+mibobject FileSystemUsage {
+    async-update = true
+    cache-timeout = 60
+}
+
+mibobject ProcessStatus {
+    async-update = true
+}
+
+inrobject DiskIO {
+    async-update = true
+    cache-timeout = 30
+    mr-interval = 300
+}
+
+inrobject NetworkIO {
+    async-update = true
+    cache-timeout = 30
+    mr-interval = 300
+}
+
+inrobject SwapIO {
+    async-update = true
+    cache-timeout = 30
+    mr-interval = 300
+}
+
+/*
+// it's also possible to write the full qualified mib address
+mibobject 1.3.6.1.4.1.36539.10.5 { // load
+    async-update = false
+    cache-timeout = 25
+}
+*/
+
+/* extobject AppMonitoring {
+    async-update = true
+    cache-timeout = 210 # 3,5 minutes
+    command = /path/to/monitor/bin/ext-monitor
+    args = --fmt=json
+    @su-if@user = "" // must be defined even if no user-switch is wanted
+    sub-oid = 1
+    rlimits {
+        core = soft
+        files = soft
+    }
+} */
+
+statgrab {
+    valid-filesystems = { "!", "nfs", "nfs3", "nfs4", "cifs", "smbfs", "samba", "autofs" }
+}
+
+@log-if@
+@log-file@ = @log-spec@
+@log-endif@
+
+/**
+ * log levels
+ *
+ * log classes:
+ * - error
+ * - warning
+ * - event
+ * - info
+ * - debug
+ * - user
+ *
+ * level can be from 0 .. 15 or -1 for off
+ * all log entries with a log level lower or equal of the configured will be shown
+ *
+ * defaults:
+ * - 15 for error, warning (show all)
+ * - 10 for event
+ * -  5 for info
+ * -  0 for debug, user (only most important)
+ */
+
+// reduce log level for less important log classes
+@log-if@
+log-class {
+    event = 5
+    info = 1
+    debug = -1
+}
+@log-endif@
+
+/**
+ * SNMPv1/SNMPv2 compatibility
+ *
+ * v<n>-community <community-name> { access = { read,write,notify } | all }
+ */
+
+@use-v1-community@v1-community @default-v1-community@ {
+@use-v1-community@    access = { read,write }
+@use-v1-community@}
+
+@use-v2-community@v2-community @default-v2-community@ {
+@use-v2-community@    access = all
+@use-v2-community@}
+
+/**
+ * USM/VACM
+ */
+
+/* Unused
+user v3secret {
+    auth-proto = sha
+    auth-key = topsecret
+    priv-proto = aes
+    priv-key = confidential
+}
+
+group v3grp {
+    security-model = usm
+    security-name = { v3secret }
+    storage-type = volatile
+}
+
+view statgrab {
+    sub-tree = 1.3.6.1.4.1.36539.10
+    // mask = ""
+    view-type = included
+    storage-type = nonvolatile
+}
+
+access {
+    group-name = v3grp
+    context = other
+    security-model = usm
+    security-level = "auth,priv"
+    read-view = statgrab
+    // no write-view
+    // no notify-view
+    storage-type = nonvolatile
+}
+*/

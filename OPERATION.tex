@@ -1,0 +1,735 @@
+\usepackage{hyperref}
+\usepackage{longtable,tabularx,threeparttable}
+\usepackage[dvipsnames,svgnames,table,hyperref]{xcolor}
+\usepackage{textcomp}
+\usepackage{url,listings}
+\usepackage{fancybox}
+
+\lstset{language=C++,
+        basicstyle=\ttfamily\small,
+        keywordstyle=\color{Maroon},
+        commentstyle=\color{Blue}, 
+        stringstyle=\color{Green},
+        showstringspaces=false}
+
+\begin{document}
+
+\title{Operation Guide for Smart-Snmpd}
+
+\author{Jens Rehsack}
+
+\date{\today{}}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+\subsection{Audience}
+
+This document targets people who have to administer smart-snmpd,
+either because they operate machines with smart-snmpd running or they
+have to configure reasonable default installations for packaging or
+automated deployment.
+
+Packagers should read the INSTALL document first.
+
+\section{Operate a Smart-Snmpd Server}
+
+\subsection{Set up and Run a Simple Smart-Snmpd}
+
+\label{simple-setup}
+
+The build procedure of smart-snmpd creates and installs an example
+configuration file into \texttt{\$sysconfdir} (\texttt{\$prefix/etc})
+named smart-snmpd.conf.example. You need to copy this file into a file
+named smart-snmpd.conf and modify it to fit your requirements. The
+task of copying this configuration file might be allocated to the
+post-install script of a package.
+
+The file \texttt{smart-snmpd.conf.example} is extensively documented; it is
+strongly recommended you keep the comments when editing the configuration
+file in daily business.
+
+Note that unspecified values are set to reasonable defaults.
+
+\begin{minipage}{\textwidth}
+\subsubsection{Basic daemon settings}
+
+These settings affect all (or at least multiple) components of the
+\texttt{smart-snmpd}:
+
+\begin{threeparttable}
+\caption{Basic Settings}
+\begin{tabularx}{\textwidth}{@{}*{2}{l}%
+ >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.5\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Restriction} & \textbf{Description}\\
+\hline
+\texttt{daemonize} & \texttt{boolean} & - & When set true (default),
+\texttt{smart-snmpd} will daemonize when started\\
+\texttt{port} & \texttt{integer} & $ > 0 $ & Specifies the port to listen on, but
+listen on all available interfaces / addresses\\
+\texttt{listen-on} & \texttt{string} & must include port & Specifies the UDP
+address to listen on (IPv4 or IPv6 address and port)\\
+\texttt{status-file} & \texttt{string} & - & Specifies the fully qualified
+path name (FQPN) to the file to store the status of the snmpd\\
+\texttt{pid-file} & \texttt{string} & - & Specifies the FQPN to the
+pid-file to use\\
+\texttt{job-threads\tnote{1}} & \texttt{integer} & $ > 0 $ & Specifies the number
+of threads which will be used to answer snmp requests \\
+\texttt{rlimits} & \texttt{struct} & - & Provides settings for the (soft)
+resource limits of the daemon for \texttt{core (RLIMIT\_CORE)},
+\texttt{cpu (RLIMIT\_CPU)}, \texttt{data (RLIMIT\_DATA)},
+\texttt{filesize (RLIMIT\_FSIZE)}, \texttt{files (RLIMIT\_NOFILE)},
+\texttt{stack (RLIMIT\_STACK)} and \texttt{mem (RLIMIT\_AS)}.
+
+Allowed values are: \texttt{integer} (specifying an absolute limit),
+''\texttt{unlimited}'', ''\texttt{soft}'' (current set soft limit),
+''\texttt{hard} (current set hard limit)''. If not specified, the
+default is ''\texttt{soft}''.\\
+\texttt{on-fatal\tnote{2}} & \texttt{enum} & - & defines the action on fatal
+errors (\texttt{ERROR\_LOG} with log-level 0) - possible values:
+\texttt{ignore}, \texttt{raise}, \texttt{kill} (default), \texttt{exit},
+\texttt{\_exit}, \texttt{abort}\\
+\texttt{su-cmd\tnote{3}} & \texttt{string} & - & Command to use to
+execute an external command as a specific user\\
+\texttt{su-args\tnote{3}} & \texttt{string} & - & Arguments for
+above command\\
+\hline
+\end{tabularx}
+
+\begin{tablenotes}
+\item[1] only with threadpool support compiled into agent++\\
+\item[2] only relevant when compiled with log4cplus (handler in snmp++ always uses raise(3) sending a \texttt{SIGTERM})
+\begin{description}
+\item[\texttt{ignore}] ignore the fatal error
+\item[\texttt{raise}] send the signal \texttt{SIGTERM} using raise(3)
+\item[\texttt{kill}] send the signal \texttt{SIGTERM} using kill(2) on getpid(2)
+\item[\texttt{exit}] exits from the currently running process using exit(3), which means some cleanup tasks are done by the runtime library before the process is reaped by the kernel
+\item[\texttt{\_exit}] exits from the currently running process using the \_exit(2) syscall, which means the process is reaped immediately
+\item[\texttt{abort}] exits from the currently running process using abort(3), which means, a core file is written and after that the process is killed by a \texttt{SIGABRT} signal
+\end{description}
+\textbf{Note} that the last three actions might not flush all logging messages\\
+\item[3] only with libjson (bundled or separate) and -\--with-su-cmd enabled in configuration
+\end{tablenotes}
+
+\end{threeparttable}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Example:
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+// listen on extra port
+port = 8161
+
+// default:
+// status-file = /opt/smart-snmpd/var/db/smart-snmpd/status.db
+
+su-cmd = "/usr/bin/sudo"
+su-args = {"-u", "%u", "%c"}
+
+// how many request-threads shall run
+job-threads = 24
+
+rlimits {
+    core = "unlimited" // always write core dumps on SIGSEGV
+    files = 512 // usually more than enough
+}
+
+on-fatal = _exit // rigorous exiting on fatal error
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\subsubsection{Logging settings}
+
+These settings affect the logging behavior of \texttt{smart-snmpd} and are
+only available when logging support wasn't disabled in snmp++.
+
+\begin{threeparttable}
+\caption{Basic Settings}
+\begin{tabularx}{\textwidth}{@{}*{2}{l}%
+% >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.5\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Description}\\
+\hline
+\texttt{log-file\tnote{1}} & \texttt{string} & Specifies the FQPN of the file to write logs to\\
+\texttt{log4cplus-property-file\tnote{2}} & \texttt{string} & Specifies the FQPN of the property file to configure log4cplus \\
+\texttt{log-profile\tnote{3}} & \texttt{string} &
+Specifies the log-profile to use. In addition to the 9 profiles provided by
+snmp++, a profile named ''individual'' is provided which means ''Use the
+individual log level configuration in \texttt{log-class}''.\\
+\texttt{log-class} & \texttt{struct} & Defines each
+each log-level per class (\texttt{error}, \texttt{warning},
+\texttt{event}, \texttt{info}, \texttt{debug}, \texttt{user\tnote{4}}) individually.
+
+Permitted values are \texttt{-1} for disabled and a threshold value from
+\texttt{0} to \texttt{15}.\\
+\hline
+\end{tabularx}
+
+\begin{tablenotes}
+\item[1] only when compiled without log4cplus (using snmp++ logging builtin)\\
+\item[2] only with log4cplus \\
+\item[3] only with log-profiles enabled in snmp++\\
+\item[4] snmp++ log level \texttt{user} is mapped to \emph{log4cplus'} log level \texttt{TRACE} when logging via log4cplus.
+\end{tablenotes}
+
+\end{threeparttable}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Example:
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+log4cplus-property-file = /opt/smart-snmpd/etc/log.properties
+
+/**
+ * log levels
+ *
+ * log classes:
+ * - error
+ * - warning
+ * - event
+ * - info
+ * - debug
+ * - user
+ *
+ * level can be from 0 .. 15 or -1 for off
+ * all log entries with a log level lower or equal of the
+ * configured will be shown
+ *
+ * defaults:
+ * - 15 for error, warning (show all)
+ * - 10 for event
+ * -  5 for info
+ * -  0 for debug, user (only most important)
+ */
+
+// reduce log level for less important log classes
+
+log-class {
+    event = 5
+    info = 1
+    debug = -1
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\subsubsection{Statgrab settings}
+
+These settings affect the wy statistics are collected with \textit{libstatgrab}.
+Currently only file systems can be filtered.
+
+\begin{threeparttable}
+\caption{Statgrab Settings}
+\begin{tabularx}{\textwidth}{@{}*{2}{l}%
+% >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.5\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Description}\\
+\hline
+\texttt{valid-filesystems} & \texttt{list} & Specifies a list of file
+system types to collect statistics for. With a ''!'' as first item
+the specified list is subtracted from the initial list of valid
+file systems\\
+\hline
+\end{tabularx}
+
+\end{threeparttable}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Example:
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+statgrab {
+    // filter all kind of networking file systems to
+    // avoid hanging when the server isn't available
+    valid-filesystems = { "!",
+                          "nfs", "nfs3", "nfs4",
+                          "cifs", "smbfs", "samba"
+    }
+}\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\subsubsection{Basic MIB Settings}
+
+The built-in basic MIBs are setup using either the \emph{mibobject} or
+\emph{inrobject}. The \emph{mibobject} structure initializes the basic
+configuration settings of all managed \texttt{smart-snmpd} MIBs:
+
+\begin{threeparttable}
+\caption{Basic MIB Settings}
+\begin{tabularx}{\textwidth}{@{}*{2}{l}%
+ >{\setlength\hsize{0.5\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Description}\\
+\hline
+\texttt{mib-enabled} & \texttt{boolean} & Specifies whether this MIB object
+is enabled and can be requested or not. By default all built-in mibs are
+enabled.\\
+\texttt{async-update} & \texttt{boolean} & Specifies whether this MIB object
+will be updated asynchronously in a background thread or synchronously
+every time when requested. By default a MIB is updated synchronously.\\
+\texttt{cache-timeout} & \texttt{integer} & Time in seconds before the
+data cache of a MIB object becomes invalid and must be refreshed. This
+happens all 30 seconds by default.\\
+\hline
+\end{tabularx}
+\end{threeparttable}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Example:
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+mibobject DaemonStatus {
+    // mib-enabled = false
+    async-update = true
+    cache-timeout = 60 /* update once a minute */
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\subsubsection{Interval MIB Settings}
+
+Several MIBs support differences, too. Those MIBs can be configured
+using the \emph{inrobject} which contains all settings of \emph{mibobject}
+and extends it with:
+
+\begin{threeparttable}
+\caption{Interval MIB Settings}
+\begin{tabularx}{\textwidth}{@{}*{2}{l}%
+ >{\setlength\hsize{0.5\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Description}\\
+\hline
+\texttt{mr-interval} & \texttt{integer} & Time in seconds of the most-recent
+interval to calculate the difference. The value must be a multiple of
+\texttt{cache-timeout}. \textbf{Note:} If no interval is given, the value
+of \texttt{cache-timeout} is used which results in a diff between the most
+current value set and the one before.\\
+\hline
+\end{tabularx}
+\end{threeparttable}
+
+It is strongly recommended you configure a MIB object which delivers
+differences to be updated asynchronously via a background
+thread. Without this, it is not guaranteed that the difference time slices are
+valid. In the case of a synchronous configuration, \texttt{smart-snmpd}
+will issue out a warning.
+
+If you do not configure eg. CpuUsage using the inrobject section, but
+mibobject, the most recent cache interval is by default set to the value of
+cache-timeout. This means at least the difference from the last statistics
+is kept.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Example:
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+inrobject CpuUsage {
+    async-update = true // strongly recommended for
+                        // interval monitoring
+    cache-timeout = 30  // also: measure interval base
+    mr-interval = 600   // calculation time difference interval
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\subsubsection{Setting up External Command MIBs}
+
+\texttt{smart-snmpd} supports MIBs from external commands in addition to the
+planned \emph{AgentX} support. Those external command MIBs are designed for
+performance - the \emph{AgentX} protocol slows down mass data retrieves.
+
+The external command MIBs are below \texttt{1.3.6.1.4.1.36539.20} and
+need to be specified for each tree separately in the configuration using
+the \emph{extobject} group, which extends the \emph{mibobject} specification
+as follows:
+
+\begin{threeparttable}
+\caption{External Command MIB Settings}
+\begin{tabularx}{\textwidth}{@{}*{2}{l}%
+ >{\setlength\hsize{0.5\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Description}\\
+\hline
+\texttt{command} & \texttt{string} & Specifies the FQPN to the command to
+execute and the full arguments as a shell expression\\
+\texttt{args} & \texttt{list of strings} & Specifies the arguments passed
+to the executed command\\
+\texttt{user\tnote{1}} & \texttt{string} & Specifies the name of the user to switch
+to for command execution.\\
+\texttt{sub-oid} & \texttt{integer} & specifies the oid below
+\texttt{1.3.6.1.4.1.36539.20} where the received data should be addressed.\\
+\texttt{rlimits} & \texttt{struct} & Allows setting the current (soft)
+resource limits for the executed process for \texttt{core (RLIMIT\_CORE)},
+\texttt{cpu (RLIMIT\_CPU)}, \texttt{data (RLIMIT\_DATA)},
+\texttt{filesize (RLIMIT\_FSIZE)}, \texttt{files (RLIMIT\_NOFILE)},
+\texttt{stack (RLIMIT\_STACK)} and \texttt{mem (RLIMIT\_AS)} individually.
+
+Allowed values are: absolute limit (\texttt{integer}), \texttt{unlimited},
+\texttt{soft} (soft limit at daemon start), \texttt{hard} (hard limit at daemon start).\\
+\hline
+\end{tabularx}
+\begin{tablenotes}
+\item[1] only with -\--with-su-cmd enabled in configuration
+\end{tablenotes}
+\end{threeparttable}
+
+If you configure a MIB for an external object using mibobject instead of
+extobject, no external command will be known and the MIB will remain
+empty.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Example:
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+extobject AppMonitoring {
+    async-update = true
+    cache-timeout = 600 # 10 minutes
+    command = /opt/smart-snmpd/libexec/plugin/appmon
+    args = { "--output", "json" }
+    user = "" // must be defined even if no user-switch is wanted
+    sub-oid = 1
+    rlimits {
+        core = "soft"
+        files = "soft"
+    }
+}\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\subsubsection{Built-In Mibs and their Names}
+
+The following built-in MIB objects need settings from \ldots
+
+\begin{threeparttable}
+\caption{Settings for built-in MIBs}
+\begin{tabular}{@{}*{3}{l}@{}}
+\hline
+\textbf{MIB Object} & \textbf{OID} & \textbf{Setting Structure}\\
+\hline
+\texttt{DaemonStatus} & \texttt{1.3.6.1.4.1.36539.10.1} & \emph{mibobject}\\
+\texttt{HostInfo} & \texttt{1.3.6.1.4.1.36539.10.2} & \emph{mibobject}\\
+\texttt{CpuUsage} & \texttt{1.3.6.1.4.1.36539.10.3} & \emph{inrobject}\\
+\texttt{MemoryUsage} & \texttt{1.3.6.1.4.1.36539.10.4} & \emph{mibobject}\\
+\texttt{SystemLoad} & \texttt{1.3.6.1.4.1.36539.10.5} & \emph{mibobject}\\
+\texttt{UserLogins} & \texttt{1.3.6.1.4.1.36539.10.6} & \emph{mibobject}\\
+\texttt{ProcessStatus} & \texttt{1.3.6.1.4.1.36539.10.7} & \emph{mibobject}\\
+\texttt{FileSystemUsage} & \texttt{1.3.6.1.4.1.36539.10.8} & \emph{mibobject}\\
+\texttt{DiskIO} & \texttt{1.3.6.1.4.1.36539.10.20} & \emph{inrobject}\\
+\texttt{NetworkIO} & \texttt{1.3.6.1.4.1.36539.10.21} & \emph{inrobject}\\
+\texttt{SwapIO} & \texttt{1.3.6.1.4.1.36539.10.22} & \emph{inrobject}\\
+\texttt{AppMonitoring} & \texttt{1.3.6.1.4.1.36539.20.1} & \emph{extobject}\\
+\hline
+\end{tabular}
+\end{threeparttable}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+Memorize that
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+mibobject ProcessStatus {
+    ...
+}
+\end{lstlisting}
+
+is the same as
+
+\begin{lstlisting}[language=C++,inputencoding=latin9,frame=shadowbox]
+mibobject 1.3.6.1.4.1.36539.10.7 {
+    ...
+}
+\end{lstlisting}
+\end{minipage}
+
+\subsubsection{Setting up External AgentX Satelites}
+
+Future Task (Unimplemented)
+
+\subsubsection{Setting up External MIBs in Shared Libraries}
+
+Future Task (Unimplemented)
+
+\subsubsection{Setting up Access Control}
+
+\texttt{smart-snmpd} implements full \emph{SNMPv3} access control via embedded
+\emph{agent++} library. For the specification see \url{http://www.ietf.org/rfc/rfc3415.txt}.
+
+
+To configure \emph{SNMPv3 VACM}, the following structures should be used:
+
+\begin{threeparttable}
+\caption{\emph{user}: USM Configuration}
+
+\begin{tabularx}{\textwidth}{@{}*{2}{l}
+ >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.6\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Values} & \textbf{Description}\\
+\hline
+\texttt{auth-proto} & \texttt{enum} & \texttt{none}, \texttt{md5}, \texttt{sha} & hash algorithm for \texttt{auth-key}\\
+\texttt{auth-key} & \texttt{string} & ~ & the authentication key\\
+\texttt{priv-proto} & \texttt{enum} & \texttt{none}, \texttt{des},
+\texttt{3des\tnote{*}}, \texttt{idea\tnote{*}}, \texttt{aes\tnote{1}},
+\texttt{aes128}, \texttt{aes192\tnote{*}}, \texttt{aes256\tnote{*}}, & encryption algorithm for \texttt{priv-key}\\
+\texttt{priv-key} & \texttt{string} & ~ & the private key\\
+\hline
+\end{tabularx}
+
+\begin{tablenotes}
+\item[*] not supported by all clients\\
+\item[1] alias for aes128
+\end{tablenotes}
+\end{threeparttable}
+
+The security name is taken from the section title of the individual user
+sections specified in the configuration file.
+
+\begin{threeparttable}
+\caption{\emph{group}: Group Table Configuration}
+
+\begin{tabularx}{\textwidth}{@{}*{2}{l}
+ >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.6\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Values} & \textbf{Description}\\
+\hline
+\texttt{security-model} & \texttt{enum} & \texttt{usm} & Currently the one and only valid security model is USM\\
+\texttt{security-name} & \texttt{list of strings} & Name of defined user & List of users (mapped to security name) valid for this group\\
+\texttt{storage-type} & \texttt{enum} & \texttt{other}, \texttt{volatile}, \texttt{nonvolatile}, \texttt{permanent}, \texttt{readonly} & storage type for this entry\\
+\hline
+\end{tabularx}
+\end{threeparttable}
+
+The group name is taken from the section title of the individual group
+sections specified in the configuration file.
+
+\begin{threeparttable}
+\caption{\emph{access}: View Table Configuration}
+
+\begin{tabularx}{\textwidth}{@{}*{2}{l}
+ >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.6\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Values} & \textbf{Description}\\
+\hline
+\texttt{sub-tree} & \texttt{OID} & OID\tnote{1} & Valid, managed OID or a parent of any\\
+\texttt{mask} & \texttt{Hex Integer} & Bitmask as hexadecimal string &
+See ViewTreeFamily description in RFC-3415\\
+\texttt{view-type} & \texttt{enum} & \texttt{included}, \texttt{excluded} &
+include or exclude this view tree\\
+\texttt{storage-type} & \texttt{enum} & \texttt{other}, \texttt{volatile},
+\texttt{nonvolatile}, \texttt{permanent}, \texttt{readonly} &
+storage type for this entry\\
+\hline
+\end{tabularx}
+
+\begin{tablenotes}
+\item[1] \textbf{OID}: \textbf{O}bject \textbf{ID}entifier - also known
+as a "MIB object identifier" or "MIB variable" in the SNMP network
+management protocol. See \url{http://www.pcmag.com/encyclopedia\_term/0,2542,t=OID&i=48334,00.asp}
+or \url{http://www.paessler.com/support/kb/questions/49} for details.
+\end{tablenotes}
+\end{threeparttable}
+
+\begin{threeparttable}
+\caption{\emph{access}: Access Table Configuration}
+
+\begin{tabularx}{\textwidth}{@{}*{2}{l}
+ >{\setlength\hsize{0.2\hsize}}X
+ >{\setlength\hsize{0.6\hsize}}X@{}
+}
+\hline
+\textbf{Setting} & \textbf{Data Type} & \textbf{Values} & \textbf{Description}\\
+\hline
+\texttt{group-name} & \texttt{string} & Name of defined group & Name of group whose access configuration is done here\\
+\texttt{context} & \texttt{string} & & Context name for this configuration\\
+\texttt{security-model} & \texttt{enum} & \texttt{usm} & Currently the one and only valid security model is USM\\
+\texttt{security-level} & \texttt{enum} & \texttt{none}, \texttt{noauth}\tnote{1,2},
+\texttt{nopriv}\tnote{1,2}, \texttt{auth}\tnote{1,2}, \texttt{priv}\tnote{1,2} &
+Security level for this access entry\\
+\texttt{match} & \texttt{enum} & & \ldots\\
+\texttt{read-view} & \texttt{string / reference} & Name of defined view & Read view for this access entry\\
+\texttt{write-view} & \texttt{string / reference} & Name of defined view & Write view for this access entry\\
+\texttt{notify-view} & \texttt{string / reference} & Name of defined view & Notify view for this access entry\\
+\texttt{storage-type} & \texttt{enum} & \texttt{other}, \texttt{volatile}, \texttt{nonvolatile}, \texttt{permanent}, \texttt{readonly} & storage type for this entry\\
+\hline
+\end{tabularx}
+
+\begin{tablenotes}
+\item[1] when not ''none'' used, the specified combination must be in the order of first auth/noauth and then priv/nopriv\\
+\item[2] noauth,priv is an invalid combination
+\end{tablenotes}
+\end{threeparttable}
+
+\pagebreak
+\subsection{Invoking the Smart-Snmpd}
+
+\subsubsection{Command Line Interaction}
+
+The available command line arguments are displayed when \texttt{smart-snmpd}
+is called using the ''-h'' switch. The one which will be discussed here in
+detail is \texttt{-k}. Using the \texttt{-k} command line switch allows
+you to choose the action to run from \texttt{start} (default), \texttt{stop},
+\texttt{restart}, \texttt{graceful}, \texttt{reload}, \texttt{check},
+\texttt{kill}.
+
+\begin{threeparttable}
+\caption{Actions on command line}
+
+\begin{tabularx}{\textwidth}{@{}*{1}{l}
+ >{\setlength\hsize{0.75\hsize}}X@{}
+}
+\hline
+\textbf{Action Name} & \textbf{Action Description}\\
+\hline
+\texttt{start} & starts the \emph{Smart-SNMP-Daemon}\\
+\texttt{stop} & Stops the currently running \emph{Smart-SNMP-Daemon}. Requests in the queue are answered (up to 2 seconds\tnote{*}).\\
+\texttt{restart} & Restarts\tnote{1} the currently running \emph{Smart-SNMP-Daemon}. Requests in the queue aren't answered.\\
+\texttt{graceful} & Gracefully restarts the currently running \emph{Smart-SNMP-Daemon}. Requests in the queue are answered (up to 2 seconds\tnote{*}).\\
+\texttt{reload} & Reloads\tnote{2} the configuration of the currently running \emph{Smart-SNMP-Daemon}\\
+\texttt{check} & Performs a check of the configuration file of the \emph{Smart-SNMP-Daemon}\\
+\texttt{kill} & Kills\tnote{1} the currently running \emph{Smart-SNMP-Daemon}\\
+\hline
+\end{tabularx}
+
+\begin{tablenotes}
+\item[*] On small powered systems with heavy load a massive tailback of
+requests can result in dropping requests even when restarting gracefully.
+This is a limitation of UDP and cannot be fixed without forcing a denial
+of service for new requests.\\
+\item[1] sends a \texttt{SIGKILL} instead of the usually sent \texttt{SIGTERM}
+which should force the operating system to remove the process.
+\item[2] Reload (via sending the signal \texttt{SIGHUP} to the daemon process)
+the configuration does neither affect the community/authentication entries nor
+log4cplus configuration due locking bug in current versions\\
+\end{tablenotes}
+\end{threeparttable}
+
+Runtime settings, which are refreshed when the smart-snmpd catches a
+SIGHUP signal, are:
+
+\begin{itemize}
+\item{log-file}
+\item{log-profile (when snmp++ is compiled with --with-log-profile)}
+\item{log-class (for log-profile = ''individual'')}
+\item{all mibobject, inrobject and extobject definitions}
+\item{su-cmd and su-args}
+\end{itemize}
+
+\subsubsection{Overriding Configuration Settings}
+
+In some circumstances it is reasonable to temporarily override some
+configuration settings. You can do this from the command line when
+starting the daemon (and only then) by specifying one or more of following
+options:
+
+\begin{description}
+\item[-f]{loads config from specified file}
+\item[-p]{uses specified pid-file}
+\item[-s]{use specified status file}
+\item[-l]{logs into specified file}
+\item[-L]{uses specified log-profile}
+\end{description}
+
+An already running daemon cannot be forced to reload into the foreground (or
+vice versa), you need to restart the daemon with appropriate \texttt{-d}
+or \texttt{-D} switch.
+
+\textbf{Note:} command line switches are valid until the daemon
+ends or gets restarted with different command line switches. There is no
+way to override such settings without stopping the daemon at least for a
+moment.
+
+\subsubsection{Requirements to start a Smart-Snmpd}
+
+The \emph{Smart-Snmpd} has temporary and permanent requirements to operate.
+
+The permanent requirements are:
+\begin{itemize}
+\item The directories to store the log-file, the status-file and the pid-file
+must exist and the operating user must have write permissions to those
+directories and the optional existing files from the last run.
+\item The file system(s) containing above mentioned directories must have
+enough free space to modify the named files.
+\item No other process must operate on the configured UDP port
+\item The system must have enough resources to start the configured
+\texttt{job-threads}, the configured \texttt{async-threads}, the configured
+thread for asynchronous logging and the thread for the signal handler.
+\item Limits for the process must be large enough:
+\begin{itemize}
+\item at least 64MB virtual memory,
+\item at least the permission to open up to 16 files - more when multiple external MIBs are configured
+\item a stack size of at least 16KB
+\end{itemize}
+\end{itemize}
+
+The temporary requirements are:
+\begin{itemize}
+\item The system must have enough resources (eg. free process table entries)
+so the \texttt{smart-snmpd} process can be forked twice.
+\item The system must have at least one available System V Semaphore.
+\item The operating user must have read permissions to the specified
+(either on command line or during build configuration) configuration file
+\end{itemize}
+
+\subsection{Run a Smart-Snmpd in the Build Environment}
+
+\label{setup-build}
+
+Command line arguments always override configuration file settings and
+default behaviours as described in ''Setting up and Run a Simple
+Smart-Snmpd'' (Section \ref{simple-setup}).
+
+Usually you do not want to run a local smart-snmpd using elevated
+privileges. That implies, the daemon can neither bind to port 161
+nor modify \$prefix/var/run/smart-snmpd.pid nor any other required
+status file (as the boot counter). It implies further, that some
+statistics might be incomplete or unavailable, depending on the
+underlying operating system.
+
+Thus you need to override those file locations using
+\begin{verbatim}
+  $ ./src/smart-snmpd -f `pwd`/etc/smart-snmpd-test.conf \
+                      -p `pwd`/smart-snmpd.pid \
+                      -s `pwd`/smart-snmpd.db \
+                      -l `pwd`/smart-snmpd.log
+\end{verbatim}
+
+\section{Platform Specific Issues}
+
+\subsection{Windows NT}
+
+Unimplemented.
+
+\subsection{VMS}
+
+Unimplemented.
+
+\subsection{MacOS X}
+
+Partial working.
+
+\section{Language Bindings}
+
+Future Task
+
+\end{document}

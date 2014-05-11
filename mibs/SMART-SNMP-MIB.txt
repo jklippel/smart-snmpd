@@ -1,0 +1,2524 @@
+SMART-SNMP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	enterprises,
+	MODULE-IDENTITY,
+	OBJECT-TYPE,
+	Counter64,
+	Opaque,
+	Unsigned32
+		FROM SNMPv2-SMI
+	TEXTUAL-CONVENTION
+		FROM SNMPv2-TC
+	OBJECT-GROUP
+		FROM SNMPv2-CONF;
+
+smRegMIB MODULE-IDENTITY
+	LAST-UPDATED "201009141028Z"	-- Sep 14, 2010 10:28:00 AM
+	ORGANIZATION "smart-snmp.org"
+	CONTACT-INFO
+		"Matthias Haag
+		www.smart-snmp.org"
+	DESCRIPTION
+		""
+	REVISION "201009141028Z"	-- Sep 14, 2010 10:28:00 AM
+	DESCRIPTION
+		"Initial version."
+	-- 1.3.6.1.4.1.36539
+	::= { enterprises 36539 }
+
+
+smInitialResidentMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.3
+	::= { smDaemonStatus 3 }
+
+
+smAggregatedVirtualMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Mean average virtual memory used"
+	-- 1.3.6.1.4.1.36539.10.1.4
+	::= { smDaemonStatus 4 }
+
+
+smAggregatedResidentMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.5
+	::= { smDaemonStatus 5 }
+
+
+smCurrentVirtualMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.6
+	::= { smDaemonStatus 6 }
+
+
+smCurrentResidentMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.7
+	::= { smDaemonStatus 7 }
+
+
+smCurrentVirtualMemoryIncreases OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Counter which is increased each time where smCurrentVirtualMemory is greater than smAggregatedVirtualMemory (up to UINT32_MAX), decremented otherwise (down to 0)"
+	-- 1.3.6.1.4.1.36539.10.1.8
+	::= { smDaemonStatus 8 }
+
+
+smCurrentResidentMemoryIncreases OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Counter which is increased each time where smCurrentResidentMemory is greater thansmAggregatedResidentMemory (up to UINT32_MAX), decremented otherwise (down to 0)"
+	-- 1.3.6.1.4.1.36539.10.1.9
+	::= { smDaemonStatus 9 }
+
+
+smDiskIoIntervalWriteBytes OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes the disk has written"
+	-- 1.3.6.1.4.1.36539.10.20.6.1.4
+	::= { smDiskIoIntervalEntry 4 }
+
+
+smDaemonCpuTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Wasted CPU time of the daemon"
+	-- 1.3.6.1.4.1.36539.10.1.12
+	::= { smDaemonStatus 12 }
+
+
+smDiskIoIntervalFrom OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as begin timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.20.4
+	::= { smDiskIoStatus 4 }
+
+
+smLoad1RealInteger OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The load average over 1 minute multiplied with 100"
+	-- 1.3.6.1.4.1.36539.10.5.2.101
+	::= { smSystemLoadReal 101 }
+
+
+smLoad5RealInteger OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The load average over 5 minutes multiplied with 100"
+	-- 1.3.6.1.4.1.36539.10.5.2.105
+	::= { smSystemLoadReal 105 }
+
+
+smDiskIoIntervalUntil OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as end timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.20.5
+	::= { smDiskIoStatus 5 }
+
+
+smLoad15RealInteger OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The load average over 15 minutes multiplied with 100"
+	-- 1.3.6.1.4.1.36539.10.5.2.115
+	::= { smSystemLoadReal 115 }
+
+
+smCpuUserTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.1
+	::= { smCpuTotal 1 }
+
+
+smNetworkIoIntervalUntil OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as end timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.21.5
+	::= { smNetworkIoStatus 5 }
+
+
+smLoad1RealFloat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The load average over 1 minute as string representation of it's floating point number"
+	-- 1.3.6.1.4.1.36539.10.5.2.1
+	::= { smSystemLoadReal 1 }
+
+
+smCpuKernelTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.2
+	::= { smCpuTotal 2 }
+
+
+smNetworkIoIntervalFrom OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as begin timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.21.4
+	::= { smNetworkIoStatus 4 }
+
+
+smLoad5RealFloat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The load average over 5 minutes as string representation of it's floating point number"
+	-- 1.3.6.1.4.1.36539.10.5.2.5
+	::= { smSystemLoadReal 5 }
+
+
+smCpuIdleTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.3
+	::= { smCpuTotal 3 }
+
+
+smLoad15RealFloat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The load average over 15 minutes as string representation of it's floating point number"
+	-- 1.3.6.1.4.1.36539.10.5.2.15
+	::= { smSystemLoadReal 15 }
+
+
+smCpuIowaitTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.4
+	::= { smCpuTotal 4 }
+
+
+smCpuSwapTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.5
+	::= { smCpuTotal 5 }
+
+
+smLoad1NormalizedFloat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Normalized system load is the current load per available CPU"
+	-- 1.3.6.1.4.1.36539.10.5.3.1
+	::= { smSystemLoadNormalized 1 }
+
+
+smCpuNiceTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.6
+	::= { smCpuTotal 6 }
+
+
+smLoad5NormalizedFloat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Normalized system load is the current load per available CPU"
+	-- 1.3.6.1.4.1.36539.10.5.3.5
+	::= { smSystemLoadNormalized 5 }
+
+
+smLoad15NormalizedFloat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Normalized system load is the current load per available CPU"
+	-- 1.3.6.1.4.1.36539.10.5.3.15
+	::= { smSystemLoadNormalized 15 }
+
+
+smCpuTotalTimeTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.7
+	::= { smCpuTotal 7 }
+
+
+smLoad1NormalizedInteger OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Normalized system load is the current load per available CPU"
+	-- 1.3.6.1.4.1.36539.10.5.3.101
+	::= { smSystemLoadNormalized 101 }
+
+
+smCpuContextSwitchesTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.8
+	::= { smCpuTotal 8 }
+
+
+smLoad5NormalizedInteger OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Normalized system load is the current load per available CPU"
+	-- 1.3.6.1.4.1.36539.10.5.3.105
+	::= { smSystemLoadNormalized 105 }
+
+
+smCpuInvoluntaryContextSwitchesTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.9
+	::= { smCpuTotal 9 }
+
+
+smLoad15NormalizedInteger OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Normalized system load is the current load per available CPU"
+	-- 1.3.6.1.4.1.36539.10.5.3.115
+	::= { smSystemLoadNormalized 115 }
+
+
+smCpuVoluntaryContextSwitchesTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.10
+	::= { smCpuTotal 10 }
+
+
+smCpuInterruptsTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.11
+	::= { smCpuTotal 11 }
+
+
+smCpuSoftInterruptsTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.4.12
+	::= { smCpuTotal 12 }
+
+
+smProcessTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"contains the total number of processes currently exists on the system"
+	-- 1.3.6.1.4.1.36539.10.7.2
+	::= { smProcessStatus 2 }
+
+
+smProcessRunning OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"contains the number of processes which have time on a CPU on the system"
+	-- 1.3.6.1.4.1.36539.10.7.3
+	::= { smProcessStatus 3 }
+
+
+smProcessSleeping OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"contains the number of processes waiting for something - e.g. I/O, semaphore, ..."
+	-- 1.3.6.1.4.1.36539.10.7.4
+	::= { smProcessStatus 4 }
+
+
+smProcessStopped OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Number of processed which are currently stopped (SIGSTOP)"
+	-- 1.3.6.1.4.1.36539.10.7.5
+	::= { smProcessStatus 5 }
+
+
+smProcessZombied OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"number of terminated but not reaped processed"
+	-- 1.3.6.1.4.1.36539.10.7.6
+	::= { smProcessStatus 6 }
+
+
+smProcessTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmProcessEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.7.7
+	::= { smProcessStatus 7 }
+
+
+smProcessPID OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Process ID of this entry"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.1
+	::= { smProcessEntry 1 }
+
+
+smProcessPPID OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Parent Process ID"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.2
+	::= { smProcessEntry 2 }
+
+
+smProcessExecutable OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"path to the executable image of the current process"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.3
+	::= { smProcessEntry 3 }
+
+
+smProcessArgs OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"invocation arguments of process entry"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.4
+	::= { smProcessEntry 4 }
+
+
+smProcessVSize OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"size of virtual memory used by this process in bytes"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.6
+	::= { smProcessEntry 6 }
+
+
+smProcessRSize OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"size of resident memory used by this process in bytes"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.7
+	::= { smProcessEntry 7 }
+
+
+smProcessCpuTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"time in seconds spent running"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.9
+	::= { smProcessEntry 9 }
+
+
+smProcessUserId OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The UID the process is running as"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.10
+	::= { smProcessEntry 10 }
+
+
+smProcessUserName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The user name the process is running as (OPTIONAL, as configured)"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.11
+	::= { smProcessEntry 11 }
+
+
+smFilesystemTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmFilesystemEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION
+		"Disk watching information.  Partions to be watched
+		are configured by the snmpd.conf file of the agent."
+	-- 1.3.6.1.4.1.36539.10.8.3
+	::= { smFilesystemUsage 3 }
+
+
+smFilesystemIndex OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Integer reference number (row number) for the filesystem mib."
+	-- 1.3.6.1.4.1.36539.10.8.3.1.1
+	::= { smFilesystemEntry 1 }
+
+
+smFilesystemOptions OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Additional optional values, e.g. mount options"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.4
+	::= { smFilesystemEntry 4 }
+
+
+smProcessStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.7
+	::= { smMIBObjects 7 }
+
+smCpuCountMax OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Maximum number of CPU's configured for this machine"
+	-- 1.3.6.1.4.1.36539.10.2.10.2
+	::= { smCpuStatus 2 }
+
+
+smCpuCountCurrent OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Current number of CPU's configured for this machine"
+	-- 1.3.6.1.4.1.36539.10.2.10.3
+	::= { smCpuStatus 3 }
+
+
+smFilesystemTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Total size of the filesystem (kBytes)."
+	-- 1.3.6.1.4.1.36539.10.8.3.1.7
+	::= { smFilesystemEntry 7 }
+
+
+smFilesystemUsed OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Used space on the filesystem (kBytes)."
+	-- 1.3.6.1.4.1.36539.10.8.3.1.8
+	::= { smFilesystemEntry 8 }
+
+
+smFilesystemFree OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"free space in filesystem (including reserved space for root user)"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.9
+	::= { smFilesystemEntry 9 }
+
+
+smFilesystemINodesTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Total number of i-nodes in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.11
+	::= { smFilesystemEntry 11 }
+
+
+smFilesystemINodesAvail OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"available i-nodes in filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.14
+	::= { smFilesystemEntry 14 }
+
+
+smFilesystemINodesUsed OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"used i-nodes in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.12
+	::= { smFilesystemEntry 12 }
+
+
+smFilesystemINodesFree OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"free i-nodes in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.13
+	::= { smFilesystemEntry 13 }
+
+
+smFilesystemBlocksTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"total number of blocks in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.15
+	::= { smFilesystemEntry 15 }
+
+
+smFilesystemBlocksAvail OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"available block in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.18
+	::= { smFilesystemEntry 18 }
+
+
+smFilesystemBlocksUsed OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"used number of blocks in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.16
+	::= { smFilesystemEntry 16 }
+
+
+smFilesystemBlocksFree OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"number of free blocks in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.17
+	::= { smFilesystemEntry 17 }
+
+
+smFilesystemBlockSize OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Size of blocks in the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.19
+	::= { smFilesystemEntry 19 }
+
+
+smFilesystemIOSize OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Optimal size of I/O-blocks of the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.20
+	::= { smFilesystemEntry 20 }
+
+
+smLastUpdateDaemonStatus OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the daemon status was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.1.1
+	::= { smDaemonStatus 1 }
+
+
+smLastUpdateHostInfo OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the host information was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.2.1
+	::= { smHostInfo 1 }
+
+
+smCpuStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.2.10
+	::= { smHostInfo 10 }
+
+smCpuCountMin OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Minimum number of CPU's configured for this machine"
+	-- 1.3.6.1.4.1.36539.10.2.10.1
+	::= { smCpuStatus 1 }
+
+
+smLastUpdateCpuUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the cpu usage was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.3.1
+	::= { smCpuUsage 1 }
+
+
+smCpuIntervalFrom OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as begin timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.3.2
+	::= { smCpuUsage 2 }
+
+
+smSwapIOIntervalFrom OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as begin timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.22.2
+	::= { smSwapIoStatus 2 }
+
+
+smCpuIntervalUntil OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as end timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.3.3
+	::= { smCpuUsage 3 }
+
+
+smSwapIOIntervalUntil OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch which has been taken as end timestamp for the interval calculation"
+	-- 1.3.6.1.4.1.36539.10.22.3
+	::= { smSwapIoStatus 3 }
+
+
+smLastUpdateMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the memory usage was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.4.1
+	::= { smMemoryUsage 1 }
+
+
+smLastUpdateSystemLoad OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the system load was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.5.1
+	::= { smSystemLoad 1 }
+
+
+smLastUpdateUserLoginStatus OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the user logins were updated the last time"
+	-- 1.3.6.1.4.1.36539.10.6.1
+	::= { smUserLoginStatus 1 }
+
+
+smLastUpdateFilesystemUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the file system usage was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.8.1
+	::= { smFilesystemUsage 1 }
+
+
+Float ::= TEXTUAL-CONVENTION
+	STATUS  current
+	DESCRIPTION
+		"A single precision floating-point number.  The semantics
+		and encoding are identical for type 'single' defined in
+		IEEE Standard for Binary Floating-Point,
+		ANSI/IEEE Std 754-1985.
+		The value is restricted to the BER serialization of
+		the following ASN.1 type:
+		    FLOATTYPE ::= [120] IMPLICIT FloatType
+		(note: the value 120 is the sum of '30'h and '48'h)
+		The BER serialization of the length for values of
+		this type must use the definite length, short
+		encoding form.
+
+		For example, the BER serialization of value 123
+		of type FLOATTYPE is '9f780442f60000'h.  (The tag
+		is '9f78'h; the length is '04'h; and the value is
+		'42f60000'h.) The BER serialization of value
+		'9f780442f60000'h of data type Opaque is
+		'44079f780442f60000'h. (The tag is '44'h; the length
+		is '07'h; and the value is '9f780442f60000'h.)"
+	SYNTAX Opaque
+
+
+smMIBObjects OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10
+	::= { smRegMIB 10 }
+
+smDaemonStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.1
+	::= { smMIBObjects 1 }
+
+smCpuUserInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.3
+	::= { smCpuInterval 3 }
+
+
+smInitialVirtualMemoryUsage OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.2
+	::= { smDaemonStatus 2 }
+
+
+smCpuKernelInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.4
+	::= { smCpuInterval 4 }
+
+
+smCpuIdleInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.5
+	::= { smCpuInterval 5 }
+
+
+smCpuIowaitInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.6
+	::= { smCpuInterval 6 }
+
+
+smCpuSwapInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.7
+	::= { smCpuInterval 7 }
+
+
+smHandledRequests OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.10
+	::= { smDaemonStatus 10 }
+
+
+smCpuNiceInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.8
+	::= { smCpuInterval 8 }
+
+
+smDaemonUptime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.1.11
+	::= { smDaemonStatus 11 }
+
+
+smCpuTotalInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.9
+	::= { smCpuInterval 9 }
+
+
+smHostInfo OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.2
+	::= { smMIBObjects 2 }
+
+smCpuContextSwitchesInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.10
+	::= { smCpuInterval 10 }
+
+
+smHostname OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.2.2
+	::= { smHostInfo 2 }
+
+
+smCpuInvoluntaryContextSwitchesInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.11
+	::= { smCpuInterval 11 }
+
+
+smOsName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.2.3
+	::= { smHostInfo 3 }
+
+
+smCpuVoluntaryContextSwitchesInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.12
+	::= { smCpuInterval 12 }
+
+
+smOsRelease OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.2.4
+	::= { smHostInfo 4 }
+
+
+smCpuInterruptsInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.13
+	::= { smCpuInterval 13 }
+
+
+smOsVersion OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.2.5
+	::= { smHostInfo 5 }
+
+
+smCpuSoftInterruptsInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.3.5.14
+	::= { smCpuInterval 14 }
+
+
+smPlatform OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.2.6
+	::= { smHostInfo 6 }
+
+
+smHostUptime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when machine has been started"
+	-- 1.3.6.1.4.1.36539.10.2.7
+	::= { smHostInfo 7 }
+
+
+smBitwidth OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Width of machine word in bits (highest width supported by OS)"
+	-- 1.3.6.1.4.1.36539.10.2.8
+	::= { smHostInfo 8 }
+
+
+smVirtualized OBJECT-TYPE
+	SYNTAX  INTEGER (0..1)
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Boolean value whether the machine is virtualized or not (0 = physical instance, any other value: virtual machine)"
+	-- 1.3.6.1.4.1.36539.10.2.9
+	::= { smHostInfo 9 }
+
+
+smCpuUsage OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.3
+	::= { smMIBObjects 3 }
+
+smConformance OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.99
+	::= { smRegMIB 99 }
+
+smCpuUsageGroup OBJECT-GROUP
+	OBJECTS {
+		smCpuUserTimeTotal,
+		smCpuKernelTimeTotal,
+		smCpuIdleTimeTotal,
+		smCpuIowaitTimeTotal,
+		smCpuSwapTimeTotal,
+		smCpuNiceTimeTotal,
+		smCpuTotalTimeTotal,
+		smCpuContextSwitchesTotal,
+		smCpuInvoluntaryContextSwitchesTotal,
+		smCpuVoluntaryContextSwitchesTotal,
+		smCpuInterruptsTotal,
+		smCpuSoftInterruptsTotal,
+		smCpuIntervalFrom,
+		smCpuIntervalUntil,
+		smCpuUserInterval,
+		smCpuKernelInterval,
+		smCpuIdleInterval,
+		smCpuIowaitInterval,
+		smCpuSwapInterval,
+		smCpuNiceInterval,
+		smCpuTotalInterval,
+		smCpuContextSwitchesInterval,
+		smCpuInvoluntaryContextSwitchesInterval,
+		smCpuVoluntaryContextSwitchesInterval,
+		smCpuInterruptsInterval,
+		smCpuSoftInterruptsInterval }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.3
+	::= { smGroups 3 }
+
+smCpuTotal OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.3.4
+	::= { smCpuUsage 4 }
+
+smCpuInterval OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.3.5
+	::= { smCpuUsage 5 }
+
+smMemoryUsage OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.4
+	::= { smMIBObjects 4 }
+
+smMemoryPhysical OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.4.2
+	::= { smMemoryUsage 2 }
+
+smTotalMemoryPhysical OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The total amount of physical memory in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.2.1
+	::= { smMemoryPhysical 1 }
+
+
+smFreeMemoryPhysical OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The total amount of free physical memory in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.2.2
+	::= { smMemoryPhysical 2 }
+
+
+smUsedMemoryPhysical OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The total amount of used physical memory in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.2.3
+	::= { smMemoryPhysical 3 }
+
+
+smCacheMemoryPhysical OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The amount of physical memory used as cache in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.2.4
+	::= { smMemoryPhysical 4 }
+
+
+smMemorySwap OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.4.3
+	::= { smMemoryUsage 3 }
+
+smTotalMemorySwap OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The total swap space in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.3.1
+	::= { smMemorySwap 1 }
+
+
+smFreeMemorySwap OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The free swap in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.3.2
+	::= { smMemorySwap 2 }
+
+
+smUsedMemorySwap OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The used swap in bytes"
+	-- 1.3.6.1.4.1.36539.10.4.3.3
+	::= { smMemorySwap 3 }
+
+
+smMemoryVirtual OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.4.4
+	::= { smMemoryUsage 4 }
+
+smTotalMemoryVirtual OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Virtual memory is the sum of physical and swap memory."
+	-- 1.3.6.1.4.1.36539.10.4.4.1
+	::= { smMemoryVirtual 1 }
+
+
+smFreeMemoryVirtual OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Virtual memory is the sum of physical and swap memory."
+	-- 1.3.6.1.4.1.36539.10.4.4.2
+	::= { smMemoryVirtual 2 }
+
+
+smUsedMemoryVirtual OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Virtual memory is the sum of physical and swap memory."
+	-- 1.3.6.1.4.1.36539.10.4.4.3
+	::= { smMemoryVirtual 3 }
+
+
+smSystemLoad OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.5
+	::= { smMIBObjects 5 }
+
+smSystemLoadReal OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.5.2
+	::= { smSystemLoad 2 }
+
+smSystemLoadNormalized OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.5.3
+	::= { smSystemLoad 3 }
+
+smUserLoginStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.6
+	::= { smMIBObjects 6 }
+
+smUserLoginCount OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Currently number of users"
+	-- 1.3.6.1.4.1.36539.10.6.2
+	::= { smUserLoginStatus 2 }
+
+
+smUserLoginTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmUserLoginEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION
+		"Provide information about currently login sessions"
+	-- 1.3.6.1.4.1.36539.10.6.3
+	::= { smUserLoginStatus 3 }
+
+
+smUserLoginEntry OBJECT-TYPE
+	SYNTAX  SmUserLoginEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	INDEX {
+		smUserLoginIndex }
+	-- 1.3.6.1.4.1.36539.10.6.3.1
+	::= { smUserLoginTable 1 }
+
+
+SmUserLoginEntry ::= SEQUENCE {
+
+	smUserLoginIndex     Unsigned32,
+	smUserLoginUsername  OCTET STRING,
+	smUserLoginUserId    Unsigned32,
+	smUserLoginTty       OCTET STRING,
+	smUserLoginLoginTime Counter64,
+	smUserLoginIdleTime  Counter64,
+	smUserLoginJCpuTime  Counter64,
+	smUserLoginPCpuTime  Counter64,
+	smUserLoginWhat      OCTET STRING,
+	smUserLoginFrom      OCTET STRING }
+
+
+smUserLoginIndex OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"sequence of non-negative integer identifying current user login entry in MIB"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.1
+	::= { smUserLoginEntry 1 }
+
+
+smUserLoginUsername OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Username of the user owning the session"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.2
+	::= { smUserLoginEntry 2 }
+
+
+smUserLoginUserId OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"User-Id of the user owning the session (OPTIONAL, as configured)"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.3
+	::= { smUserLoginEntry 3 }
+
+
+smUserLoginTty OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Tty assigned to the login-session"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.4
+	::= { smUserLoginEntry 4 }
+
+
+smUserLoginLoginTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the session has been started with the user login"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.5
+	::= { smUserLoginEntry 5 }
+
+
+smUserLoginIdleTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.6.3.1.6
+	::= { smUserLoginEntry 6 }
+
+
+smUserLoginJCpuTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.6.3.1.7
+	::= { smUserLoginEntry 7 }
+
+
+smUserLoginPCpuTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.6.3.1.8
+	::= { smUserLoginEntry 8 }
+
+
+smUserLoginWhat OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"struct utmpx {
+		 char ut_name[_UTX_USERSIZE];    /* login name */
+		 char ut_id[_UTX_IDSIZE];	     /* inittab id */
+		 char ut_line[_UTX_LINESIZE];    /* tty name */
+		 char ut_host[_UTX_HOSTSIZE];    /* host name */
+		 uint16_t ut_session;	     /* session id used for windowing */
+		 uint16_t ut_type;		     /* type of this entry */
+		 pid_t ut_pid;		     /* process id creating the entry */
+		 struct {
+		  uint16_t e_termination; /* process termination signal */
+		  uint16_t e_exit;	     /* process exit status */
+		 } ut_exit;
+		 struct sockaddr_storage ut_ss;  /* address where entry was made from */
+		 struct timeval ut_tv;	     /* time entry was created */
+		 uint32_t ut_pad[10];	     /* reserved for future use */
+		};
+
+		See output of 'w' command"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.9
+	::= { smUserLoginEntry 9 }
+
+
+smUserLoginFrom OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"From where does the login comes from (console name, remote host name)"
+	-- 1.3.6.1.4.1.36539.10.6.3.1.10
+	::= { smUserLoginEntry 10 }
+
+
+smLastUpdateProcessStatus OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the process status was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.7.1
+	::= { smProcessStatus 1 }
+
+
+smProcessState OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"state of the process of this entry:
+		0 - running
+		1 - sleeping
+		2 - stopped
+		3 - zombie
+		4 - unknown"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.5
+	::= { smProcessEntry 5 }
+
+
+smProcessStartTime OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch at which this process has been started"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.8
+	::= { smProcessEntry 8 }
+
+
+smProcessGroupId OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The GID the process is running as"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.12
+	::= { smProcessEntry 12 }
+
+
+smProcessGroupName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The group name the process is running as (OPTIONAL, as configured)"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.13
+	::= { smProcessEntry 13 }
+
+
+smProcessEffectiveUserId OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The effective UID the process is running as"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.14
+	::= { smProcessEntry 14 }
+
+
+smProcessEffectiveUserName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The name of the effective UID the process is running as (OPTIONAL, as configured)"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.15
+	::= { smProcessEntry 15 }
+
+
+smProcessEffectiveGroupId OBJECT-TYPE
+	SYNTAX  Unsigned32
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The effective GID the process is running as"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.16
+	::= { smProcessEntry 16 }
+
+
+smProcessEffectiveGroupName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The name of the effective GID the process is running as (OPTIONAL, as configured)"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.17
+	::= { smProcessEntry 17 }
+
+
+smProcessNice OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Nice value (priority scheduling) of the process from -20 (highest) to 19 (lowest)"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.18
+	::= { smProcessEntry 18 }
+
+
+smProcessCpuPercent OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The current percentage of CPU the process is using (floating point value in string representation)"
+	-- 1.3.6.1.4.1.36539.10.7.7.1.19
+	::= { smProcessEntry 19 }
+
+
+smFilesystemUsage OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.8
+	::= { smMIBObjects 8 }
+
+smFilesystemCount OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Number of rows in smFilesystemTable"
+	-- 1.3.6.1.4.1.36539.10.8.2
+	::= { smFilesystemUsage 2 }
+
+
+smFilesystemType OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Type of file system (e.g. ufs, nfs, ...)"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.5
+	::= { smFilesystemEntry 5 }
+
+
+smLastUpdateDiskIoStatus OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the disk i/o information was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.20.1
+	::= { smDiskIoStatus 1 }
+
+
+smLastUpdateNetworkIoStatus OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the network i/o information was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.21.1
+	::= { smNetworkIoStatus 1 }
+
+
+smFilesystemEntry OBJECT-TYPE
+	SYNTAX  SmFilesystemEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION
+		"An entry containing a disk and its statistics."
+	INDEX {
+		smFilesystemIndex }
+	-- 1.3.6.1.4.1.36539.10.8.3.1
+	::= { smFilesystemTable 1 }
+
+
+SmFilesystemEntry ::= SEQUENCE {
+
+	smFilesystemIndex       Counter64,
+	smFilesystemMountPoint  OCTET STRING,
+	smFilesystemDevice      OCTET STRING,
+	smFilesystemOptions     OCTET STRING,
+	smFilesystemType        OCTET STRING,
+	smFilesystemDeviceType  INTEGER,
+	smFilesystemTotal       Counter64,
+	smFilesystemUsed        Counter64,
+	smFilesystemFree        Counter64,
+	smFilesystemAvail       Counter64,
+	smFilesystemINodesTotal Counter64,
+	smFilesystemINodesUsed  Counter64,
+	smFilesystemINodesFree  Counter64,
+	smFilesystemINodesAvail Counter64,
+	smFilesystemBlocksTotal Counter64,
+	smFilesystemBlocksUsed  Counter64,
+	smFilesystemBlocksFree  Counter64,
+	smFilesystemBlocksAvail Counter64,
+	smFilesystemBlockSize   Counter64,
+	smFilesystemIOSize      Counter64 }
+
+
+smFilesystemDevice OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Path of the device for the partition"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.3
+	::= { smFilesystemEntry 3 }
+
+
+smFilesystemAvail OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Available space on the filesystem"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.10
+	::= { smFilesystemEntry 10 }
+
+
+smFilesystemMountPoint OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Path where the filesystem is mounted."
+	-- 1.3.6.1.4.1.36539.10.8.3.1.2
+	::= { smFilesystemEntry 2 }
+
+
+smProcessEntry OBJECT-TYPE
+	SYNTAX  SmProcessEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	INDEX {
+		smProcessPID }
+	-- 1.3.6.1.4.1.36539.10.7.7.1
+	::= { smProcessTable 1 }
+
+
+SmProcessEntry ::= SEQUENCE {
+
+	smProcessPID                Unsigned32,
+	smProcessPPID               Unsigned32,
+	smProcessExecutable         OCTET STRING,
+	smProcessArgs               OCTET STRING,
+	smProcessState              Unsigned32,
+	smProcessVSize              Counter64,
+	smProcessRSize              Counter64,
+	smProcessStartTime          Counter64,
+	smProcessCpuTime            Counter64,
+	smProcessUserId             Unsigned32,
+	smProcessUserName           OCTET STRING,
+	smProcessGroupId            Unsigned32,
+	smProcessGroupName          OCTET STRING,
+	smProcessEffectiveUserId    Unsigned32,
+	smProcessEffectiveUserName  OCTET STRING,
+	smProcessEffectiveGroupId   Unsigned32,
+	smProcessEffectiveGroupName OCTET STRING,
+	smProcessNice               INTEGER,
+	smProcessCpuPercent         OCTET STRING }
+
+
+smFilesystemDeviceType OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Can be one of REGULAR, SPECIAL, REMOTE, LOOPBACK"
+	-- 1.3.6.1.4.1.36539.10.8.3.1.6
+	::= { smFilesystemEntry 6 }
+
+
+smDiskIoStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.20
+	::= { smMIBObjects 20 }
+
+smDiskIoCount OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Number of entries in smDiskIoTable"
+	-- 1.3.6.1.4.1.36539.10.20.2
+	::= { smDiskIoStatus 2 }
+
+
+smDiskIoTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmDiskIoEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.20.3
+	::= { smDiskIoStatus 3 }
+
+
+smDiskIoEntry OBJECT-TYPE
+	SYNTAX  SmDiskIoEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	INDEX {
+		smDiskIoIndex }
+	-- 1.3.6.1.4.1.36539.10.20.3.1
+	::= { smDiskIoTable 1 }
+
+
+SmDiskIoEntry ::= SEQUENCE {
+
+	smDiskIoIndex      Counter64,
+	smDiskIoDiskName   OCTET STRING,
+	smDiskIoReadBytes  Counter64,
+	smDiskIoWriteBytes Counter64 }
+
+
+smDiskIoIndex OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.20.3.1.1
+	::= { smDiskIoEntry 1 }
+
+
+smDiskIoDiskName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The name known to the operating system. (eg. on linux it might be hda, on Solaris c0t6d0s0)"
+	-- 1.3.6.1.4.1.36539.10.20.3.1.2
+	::= { smDiskIoEntry 2 }
+
+
+smDiskIoReadBytes OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes the disk has read"
+	-- 1.3.6.1.4.1.36539.10.20.3.1.3
+	::= { smDiskIoEntry 3 }
+
+
+smDiskIoWriteBytes OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes the disk has written"
+	-- 1.3.6.1.4.1.36539.10.20.3.1.4
+	::= { smDiskIoEntry 4 }
+
+
+smDiskIoIntervalTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmDiskIoIntervalEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.20.6
+	::= { smDiskIoStatus 6 }
+
+
+smDiskIoIntervalEntry OBJECT-TYPE
+	SYNTAX  SmDiskIoIntervalEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	INDEX {
+		smDiskIoIntervalIndex }
+	-- 1.3.6.1.4.1.36539.10.20.6.1
+	::= { smDiskIoIntervalTable 1 }
+
+
+SmDiskIoIntervalEntry ::= SEQUENCE {
+
+	smDiskIoIntervalIndex      Counter64,
+	smDiskIoIntervalDiskName   OCTET STRING,
+	smDiskIoIntervalReadBytes  Counter64,
+	smDiskIoIntervalWriteBytes Counter64 }
+
+
+smDiskIoIntervalIndex OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.20.6.1.1
+	::= { smDiskIoIntervalEntry 1 }
+
+
+smDiskIoIntervalDiskName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	UNITS
+		"The name known to the operating system. (eg. on linux it might be hda, on Solaris c0t6d0s0)"
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.20.6.1.2
+	::= { smDiskIoIntervalEntry 2 }
+
+
+smDiskIoIntervalReadBytes OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.20.6.1.3
+	::= { smDiskIoIntervalEntry 3 }
+
+
+smNetworkIoStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.21
+	::= { smMIBObjects 21 }
+
+smNetworkIoCount OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Number of entries in smNetworkIoTable"
+	-- 1.3.6.1.4.1.36539.10.21.2
+	::= { smNetworkIoStatus 2 }
+
+
+smNetworkIoTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmNetworkIoEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.21.3
+	::= { smNetworkIoStatus 3 }
+
+
+smNetworkIoEntry OBJECT-TYPE
+	SYNTAX  SmNetworkIoEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	INDEX {
+		smNetworkIoIndex }
+	-- 1.3.6.1.4.1.36539.10.21.3.1
+	::= { smNetworkIoTable 1 }
+
+
+SmNetworkIoEntry ::= SEQUENCE {
+
+	smNetworkIoIndex         Counter64,
+	smNetworkIoInterfaceName OCTET STRING,
+	smNetworkIoTx            Counter64,
+	smNetworkIoRx            Counter64,
+	smNetworkIoInPackets     Counter64,
+	smNetworkIoOutPackets    Counter64,
+	smNetworkIoInErrors      Counter64,
+	smNetworkIoOutErrors     Counter64,
+	smNetworkIoCollisions    Counter64 }
+
+
+smNetworkIoIndex OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.21.3.1.1
+	::= { smNetworkIoEntry 1 }
+
+
+smNetworkIoInterfaceName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The name known to the operating system. (eg. on AIX it might be en0, on NetBSD em0)"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.2
+	::= { smNetworkIoEntry 2 }
+
+
+smNetworkIoTx OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes transmitted"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.3
+	::= { smNetworkIoEntry 3 }
+
+
+smNetworkIoRx OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes received"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.4
+	::= { smNetworkIoEntry 4 }
+
+
+smNetworkIoInPackets OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of packets received"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.5
+	::= { smNetworkIoEntry 5 }
+
+
+smNetworkIoOutPackets OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of packets transmitted"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.6
+	::= { smNetworkIoEntry 6 }
+
+
+smNetworkIoInErrors OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of receive errors"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.7
+	::= { smNetworkIoEntry 7 }
+
+
+smNetworkIoOutErrors OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of transmit errors"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.8
+	::= { smNetworkIoEntry 8 }
+
+
+smNetworkIoCollisions OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of collisions"
+	-- 1.3.6.1.4.1.36539.10.21.3.1.9
+	::= { smNetworkIoEntry 9 }
+
+
+smNetworkIoIntervalTable OBJECT-TYPE
+	SYNTAX  SEQUENCE OF SmNetworkIoIntervalEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.21.6
+	::= { smNetworkIoStatus 6 }
+
+
+smNetworkIoIntervalEntry OBJECT-TYPE
+	SYNTAX  SmNetworkIoIntervalEntry
+	MAX-ACCESS not-accessible
+	STATUS  current
+	DESCRIPTION ""
+	INDEX {
+		smNetworkIoIntervalIndex }
+	-- 1.3.6.1.4.1.36539.10.21.6.1
+	::= { smNetworkIoIntervalTable 1 }
+
+
+SmNetworkIoIntervalEntry ::= SEQUENCE {
+
+	smNetworkIoIntervalIndex         Counter64,
+	smNetworkIoIntervalInterfaceName OCTET STRING,
+	smNetworkIoIntervalTx            Counter64,
+	smNetworkIoIntervalRx            Counter64,
+	smNetworkIoIntervalInPackets     Counter64,
+	smNetworkIoIntervalOutPackets    Counter64,
+	smNetworkIntervalIoInErrors      Counter64,
+	smNetworkIntervalIoOutErrors     Counter64,
+	smNetworkIntervalIoCollisions    Counter64 }
+
+
+smNetworkIoIntervalIndex OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.10.21.6.1.1
+	::= { smNetworkIoIntervalEntry 1 }
+
+
+smNetworkIoIntervalInterfaceName OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The name known to the operating system. (eg. on AIX it might be en0, on NetBSD em0)"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.2
+	::= { smNetworkIoIntervalEntry 2 }
+
+
+smNetworkIoIntervalTx OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes transmitted"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.3
+	::= { smNetworkIoIntervalEntry 3 }
+
+
+smNetworkIoIntervalRx OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of bytes received"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.4
+	::= { smNetworkIoIntervalEntry 4 }
+
+
+smNetworkIoIntervalInPackets OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of packets received"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.5
+	::= { smNetworkIoIntervalEntry 5 }
+
+
+smNetworkIoIntervalOutPackets OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of packets transmitted"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.6
+	::= { smNetworkIoIntervalEntry 6 }
+
+
+smNetworkIntervalIoInErrors OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of receive errors"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.7
+	::= { smNetworkIoIntervalEntry 7 }
+
+
+smNetworkIntervalIoOutErrors OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of transmit errors"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.8
+	::= { smNetworkIoIntervalEntry 8 }
+
+
+smNetworkIntervalIoCollisions OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of collisions"
+	-- 1.3.6.1.4.1.36539.10.21.6.1.9
+	::= { smNetworkIoIntervalEntry 9 }
+
+
+smSwapIoStatus OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.22
+	::= { smMIBObjects 22 }
+
+smLastUpdateSwapIoStatus OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the swap i/o information was updated the last time"
+	-- 1.3.6.1.4.1.36539.10.22.1
+	::= { smSwapIoStatus 1 }
+
+
+smSwapIoTotal OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.22.4
+	::= { smSwapIoStatus 4 }
+
+smPagesPagInTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of pages swapped into memory"
+	-- 1.3.6.1.4.1.36539.10.22.4.1
+	::= { smSwapIoTotal 1 }
+
+
+smPagesPagInInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of pages swapped into memory"
+	-- 1.3.6.1.4.1.36539.10.22.5.1
+	::= { smSwapIoInterval 1 }
+
+
+smPagesPageOutTotal OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of pages swapped out of memory (to swap)"
+	-- 1.3.6.1.4.1.36539.10.22.4.2
+	::= { smSwapIoTotal 2 }
+
+
+smSwapIoInterval OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.10.22.5
+	::= { smSwapIoStatus 5 }
+
+smPagesPageOutInterval OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"The number of pages swapped out of memory (to swap)"
+	-- 1.3.6.1.4.1.36539.10.22.5.2
+	::= { smSwapIoInterval 2 }
+
+
+--Below this OID are external command results available.
+--There is one command Object Type defined, smAppMonitoring - for exactly one external command collecting all data for all monitored applications.
+--All external commands Object Types will look similar.
+
+smExternalCommands OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.20
+	::= { smRegMIB 20 }
+
+--Defines an (example) Object Type to show how smart-snmpd will present external command results.
+
+smAppMonitoring OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.20.1
+	::= { smExternalCommands 1 }
+
+smLastUpdateAppMonitoring OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the command was successfully executed and it's output processed last time."
+	-- 1.3.6.1.4.1.36539.20.1.1
+	::= { smAppMonitoring 1 }
+
+
+smLastStartedAppMonitoring OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the external command has been started last time"
+	-- 1.3.6.1.4.1.36539.20.1.2
+	::= { smAppMonitoring 2 }
+
+
+smLastFinishedAppMonitoring OBJECT-TYPE
+	SYNTAX  Counter64
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Timestamp in seconds since epoch when the AppMonitoring script was finished last time"
+	-- 1.3.6.1.4.1.36539.20.1.3
+	::= { smAppMonitoring 3 }
+
+
+smAppMonitoringCommand OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Full qualified path name to the executable for AppMonitoring"
+	-- 1.3.6.1.4.1.36539.20.1.4
+	::= { smAppMonitoring 4 }
+
+
+smAppMonitoringCommandLine OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Full command line executed when starting the AppMonitoring command"
+	-- 1.3.6.1.4.1.36539.20.1.5
+	::= { smAppMonitoring 5 }
+
+
+smAppMonitoringUser OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Username of the user used to run the specified command"
+	-- 1.3.6.1.4.1.36539.20.1.6
+	::= { smAppMonitoring 6 }
+
+
+smAppMonitoringLastExitCode OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Last exit code of the execution of the AppMonitoring command (when exited normally), -1 when invalid"
+	-- 1.3.6.1.4.1.36539.20.1.7
+	::= { smAppMonitoring 7 }
+
+
+smAppMonitoringLastSignalCode OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Last signal code of the execution of the AppMonitoring command (when exited with a signal), -1 when invalid"
+	-- 1.3.6.1.4.1.36539.20.1.8
+	::= { smAppMonitoring 8 }
+
+
+smAppMonitoringErrorCode OBJECT-TYPE
+	SYNTAX  INTEGER
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Contains the internal error code depending on status (or 0, if no error)"
+	-- 1.3.6.1.4.1.36539.20.1.9
+	::= { smAppMonitoring 9 }
+
+
+smAppMonitoringErrorMessage OBJECT-TYPE
+	SYNTAX  OCTET STRING
+	MAX-ACCESS read-only
+	STATUS  current
+	DESCRIPTION
+		"Contains the error string from the executed command, if any"
+	-- 1.3.6.1.4.1.36539.20.1.10
+	::= { smAppMonitoring 10 }
+
+
+--Below this Object Type the data got from the external command is provided.
+
+smAppMonitoringData OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.20.1.100
+	::= { smAppMonitoring 100 }
+
+smGroups OBJECT IDENTIFIER 
+	-- 1.3.6.1.4.1.36539.99.2
+	::= { smConformance 2 }
+
+smDaemonStatusGroup OBJECT-GROUP
+	OBJECTS {
+		smInitialVirtualMemoryUsage,
+		smInitialResidentMemoryUsage,
+		smCurrentVirtualMemoryUsage,
+		smCurrentResidentMemoryUsage,
+		smHandledRequests,
+		smDaemonUptime,
+		smDaemonCpuTime,
+		smAggregatedVirtualMemoryUsage,
+		smAggregatedResidentMemoryUsage,
+		smCurrentVirtualMemoryIncreases,
+		smCurrentResidentMemoryIncreases }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.1
+	::= { smGroups 1 }
+
+smHostInfoGroup OBJECT-GROUP
+	OBJECTS {
+		smHostname,
+		smOsName,
+		smOsRelease,
+		smOsVersion,
+		smPlatform,
+		smHostUptime,
+		smBitwidth,
+		smVirtualized,
+		smCpuCountMin,
+		smCpuCountMax,
+		smCpuCountCurrent }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.2
+	::= { smGroups 2 }
+
+smMemoryUsageGroup OBJECT-GROUP
+	OBJECTS {
+		smTotalMemoryPhysical,
+		smFreeMemoryPhysical,
+		smUsedMemoryPhysical,
+		smCacheMemoryPhysical,
+		smTotalMemorySwap,
+		smFreeMemorySwap,
+		smUsedMemorySwap,
+		smTotalMemoryVirtual,
+		smFreeMemoryVirtual,
+		smUsedMemoryVirtual }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.4
+	::= { smGroups 4 }
+
+smSystemLoadGroup OBJECT-GROUP
+	OBJECTS {
+		smLoad1RealFloat,
+		smLoad5RealFloat,
+		smLoad15RealFloat,
+		smLoad1RealInteger,
+		smLoad5RealInteger,
+		smLoad15RealInteger,
+		smLoad1NormalizedFloat,
+		smLoad5NormalizedFloat,
+		smLoad15NormalizedFloat,
+		smLoad1NormalizedInteger,
+		smLoad5NormalizedInteger,
+		smLoad15NormalizedInteger }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.5
+	::= { smGroups 5 }
+
+smFilesystemGroup OBJECT-GROUP
+	OBJECTS {
+		smFilesystemIndex,
+		smFilesystemMountPoint,
+		smFilesystemDevice,
+		smFilesystemOptions,
+		smFilesystemType,
+		smFilesystemDeviceType,
+		smFilesystemTotal,
+		smFilesystemUsed,
+		smFilesystemFree,
+		smFilesystemAvail,
+		smFilesystemINodesTotal,
+		smFilesystemINodesUsed,
+		smFilesystemINodesFree,
+		smFilesystemINodesAvail,
+		smFilesystemBlocksTotal,
+		smFilesystemBlocksUsed,
+		smFilesystemBlocksFree,
+		smFilesystemBlocksAvail,
+		smFilesystemBlockSize,
+		smFilesystemIOSize,
+		smFilesystemCount }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.6
+	::= { smGroups 6 }
+
+smDiskIoGoup OBJECT-GROUP
+	OBJECTS {
+		smDiskIoIndex,
+		smDiskIoDiskName,
+		smDiskIoReadBytes,
+		smDiskIoWriteBytes,
+		smDiskIoCount,
+		smDiskIoIntervalFrom,
+		smDiskIoIntervalUntil,
+		smDiskIoIntervalIndex,
+		smDiskIoIntervalDiskName,
+		smDiskIoIntervalReadBytes,
+		smDiskIoIntervalWriteBytes }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.7
+	::= { smGroups 7 }
+
+smNetworkIoGroup OBJECT-GROUP
+	OBJECTS {
+		smNetworkIoIndex,
+		smNetworkIoInterfaceName,
+		smNetworkIoTx,
+		smNetworkIoRx,
+		smNetworkIoInPackets,
+		smNetworkIoOutPackets,
+		smNetworkIoInErrors,
+		smNetworkIoOutErrors,
+		smNetworkIoCollisions,
+		smNetworkIoCount,
+		smNetworkIoIntervalFrom,
+		smNetworkIoIntervalUntil,
+		smNetworkIoIntervalIndex,
+		smNetworkIoIntervalInterfaceName,
+		smNetworkIoIntervalTx,
+		smNetworkIoIntervalRx,
+		smNetworkIoIntervalInPackets,
+		smNetworkIoIntervalOutPackets,
+		smNetworkIntervalIoInErrors,
+		smNetworkIntervalIoOutErrors,
+		smNetworkIntervalIoCollisions }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.8
+	::= { smGroups 8 }
+
+smProcessStatusGroup OBJECT-GROUP
+	OBJECTS {
+		smProcessTotal,
+		smProcessRunning,
+		smProcessSleeping,
+		smProcessStopped,
+		smProcessZombied,
+		smProcessPID,
+		smProcessPPID,
+		smProcessExecutable,
+		smProcessArgs,
+		smProcessVSize,
+		smProcessRSize,
+		smProcessCpuTime,
+		smProcessUserId,
+		smProcessUserName,
+		smProcessGroupId,
+		smProcessGroupName,
+		smProcessEffectiveUserId,
+		smProcessEffectiveUserName,
+		smProcessEffectiveGroupId,
+		smProcessEffectiveGroupName,
+		smProcessState,
+		smProcessStartTime,
+		smProcessNice,
+		smProcessCpuPercent }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.9
+	::= { smGroups 9 }
+
+smSwapIoGroup OBJECT-GROUP
+	OBJECTS {
+		smSwapIOIntervalFrom,
+		smSwapIOIntervalUntil,
+		smPagesPagInTotal,
+		smPagesPageOutTotal,
+		smPagesPagInInterval,
+		smPagesPageOutInterval }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.11
+	::= { smGroups 11 }
+
+smLastUpdateGroup OBJECT-GROUP
+	OBJECTS {
+		smLastUpdateCpuUsage,
+		smLastUpdateDaemonStatus,
+		smLastUpdateDiskIoStatus,
+		smLastUpdateFilesystemUsage,
+		smLastUpdateHostInfo,
+		smLastUpdateMemoryUsage,
+		smLastUpdateNetworkIoStatus,
+		smLastUpdateProcessStatus,
+		smLastUpdateSwapIoStatus,
+		smLastUpdateSystemLoad,
+		smLastUpdateUserLoginStatus,
+		smLastUpdateAppMonitoring }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.12
+	::= { smGroups 12 }
+
+smUserLoginStatusGroup OBJECT-GROUP
+	OBJECTS {
+		smUserLoginCount,
+		smUserLoginIndex,
+		smUserLoginUsername,
+		smUserLoginUserId,
+		smUserLoginTty,
+		smUserLoginLoginTime,
+		smUserLoginIdleTime,
+		smUserLoginJCpuTime,
+		smUserLoginPCpuTime,
+		smUserLoginWhat,
+		smUserLoginFrom }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.10
+	::= { smGroups 10 }
+
+smAppMonitoringGroup OBJECT-GROUP
+	OBJECTS {
+		smLastStartedAppMonitoring,
+		smLastFinishedAppMonitoring,
+		smAppMonitoringCommand,
+		smAppMonitoringCommandLine,
+		smAppMonitoringUser,
+		smAppMonitoringLastExitCode,
+		smAppMonitoringLastSignalCode,
+		smAppMonitoringErrorCode,
+		smAppMonitoringErrorMessage }
+	STATUS  current
+	DESCRIPTION ""
+	-- 1.3.6.1.4.1.36539.99.2.13
+	::= { smGroups 13 }
+
+END
