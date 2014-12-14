@@ -24,6 +24,9 @@
 #include <set>
 #include <stdexcept>
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
 using namespace std;
 
 namespace SmartSnmpd
