@@ -406,10 +406,10 @@ int main(int argc, char **argv) {
 )
 
 # Do not disable mandatory libraries
-AS_IF([test "x${acx_with_libsnmp}" != "xyes"], [AC_MSG_ERROR([libsnmp++ is mandatory and must not be disabled])])
-AS_IF([test "x${acx_with_libagent}" != "xyes"], [AC_MSG_ERROR([libagent++ is mandatory and must not be disabled])])
-AS_IF([test "x${acx_with_libconfuse}" != "xyes"], [AC_MSG_ERROR([libconfuse is mandatory and must not be disabled])])
-AS_IF([test "x${acx_with_libstatgrab}" != "xyes"], [AC_MSG_ERROR([libstatgrab is mandatory and must not be disabled])])
+AS_IF([test "x${ax_cv_with_libsnmp}" != "xyes"], [AC_MSG_ERROR([libsnmp++ is mandatory and must not be disabled])])
+AS_IF([test "x${ax_cv_with_libagent}" != "xyes"], [AC_MSG_ERROR([libagent++ is mandatory and must not be disabled])])
+AS_IF([test "x${ax_cv_with_libconfuse}" != "xyes"], [AC_MSG_ERROR([libconfuse is mandatory and must not be disabled])])
+AS_IF([test "x${ax_cv_with_libstatgrab}" != "xyes"], [AC_MSG_ERROR([libstatgrab is mandatory and must not be disabled])])
 
 LINKFLAGS=
 CLIBFLAGS=
