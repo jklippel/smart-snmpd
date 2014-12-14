@@ -29,13 +29,13 @@ AC_DEFUN([AX_CXX_HAVE_STD],
 ax_cv_cxx_have_std,
 [AC_REQUIRE([AX_CXX_NAMESPACES])
  AC_LANG_PUSH([C++])
- AC_COMPILE_IFELSE(AC_LANG_PROGRAM([#include <iostream>
+ AC_COMPILE_IFELSE([AC_LANG_SOURCE([AC_LANG_PROGRAM([#include <iostream>
 #include <map>
 #include <iomanip>
 #include <cmath>
 #ifdef HAVE_NAMESPACES
 using namespace std;
-#endif],[return 0;]),
+#endif],[return 0;])])],
  ax_cv_cxx_have_std=yes, ax_cv_cxx_have_std=no)
  AC_LANG_POP([C++])
 ])

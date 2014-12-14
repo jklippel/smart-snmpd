@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 # don't require higher autoconf version for win32 support
-AC_PREREQ([2.63])
+AC_PREREQ([2.68])
 AC_INIT([smart-snmp], [0.3.0], [trash@smart-snmp.org])
 SMART_SNMP_MAJOR_VERSION=0
 SMART_SNMP_MINOR_VERSION=3
@@ -213,7 +213,7 @@ AX_WIN32([
     AC_CHECK_LIB([wsock32],[main])
     AC_CHECK_LIB([ws2_32],[main])], [
     dnl AC_CHECK_HEADERS([libgen.h])
-    AC_CHECK_HEADERS([sys/ipc.h sys/sem.h], ,[AC_MSG_FAILURE([missing header for SysV semaphores])], [
+    AC_CHECK_HEADERS([sys/ipc.h sys/sem.h], ,[AC_MSG_FAILURE([missing header for SysV semaphores])], [AC_LANG_SOURCE([
 AC_INCLUDES_DEFAULT
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -224,12 +224,12 @@ AC_INCLUDES_DEFAULT
 #ifdef HAVE_SYS_IPC_H
 # include <sys/ipc.h>
 #endif
-    ])
+    ])])
     AC_SEARCH_LIBS([sem_init], [rt])
     AC_CHECK_HEADERS([dlfcn.h])
     AS_IF([test "x$ac_cv_header_dlfcn_h" = "xyes"], [
         AC_MSG_CHECKING([for dlsym(RTLD_NEXT, ...)])
-        AC_COMPILE_IFELSE([
+        AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 AC_INCLUDES_DEFAULT
 #include <dlfcn.h>
 
@@ -239,7 +239,7 @@ AC_INCLUDES_DEFAULT
             real_malloc = dlsym(RTLD_NEXT, "malloc");
         return 0;
     }
-          ], [
+          ])], [
               AC_MSG_RESULT([yes])
               AC_DEFINE(HAVE_DLSYM_RTLD_NEXT, , [define with dlsym(RTLD_NEXT, ...) works])
               AC_SEARCH_LIBS([dlsym], [dl])
@@ -378,7 +378,7 @@ AM_CONDITIONAL(WITH_STL_CONTAINER,true)
 
 AC_MSG_CHECKING([for sqrt(unsigned long long int)])
 AC_LINK_IFELSE(
-  [
+  [AC_LANG_SOURCE([
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -395,7 +395,7 @@ int main(int argc, char **argv) {
     cout << sqrt_ull << endl;
     return 0;
 }
-  ],
+  ])],
   [
     AC_MSG_RESULT(yes)
     AC_DEFINE([HAVE_SQRT_LONG_LONG], 1, [define when prototype for sqrt can deal with long long variables])
@@ -435,7 +435,7 @@ $acx_include_sockets
 AC_MSG_CHECKING([if libsnmp++ is built with SNMPv3 support])
 acx_cppflags_safe="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $CLIBFLAGS"
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 AC_INCLUDES_DEFAULT
 $acx_include_sockets
 
@@ -445,7 +445,7 @@ $acx_include_sockets
 #endif
 
 int main() { return 0; }
-  ], [
+  ])], [
     AC_MSG_RESULT([yes])
     acx_libsnmp_snmpv3=yes
   ], [
@@ -459,7 +459,7 @@ AM_CONDITIONAL(WITH_LOGGING, false)
 AC_MSG_CHECKING([if libsnmp++ is built with logging support])
 acx_cppflags_safe="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $CLIBFLAGS"
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 AC_INCLUDES_DEFAULT
 $acx_include_sockets
 
@@ -469,7 +469,7 @@ $acx_include_sockets
 #endif
 
 int main() { return 0; }
-  ], [
+  ])], [
     AC_MSG_RESULT([yes])
     acx_libsnmp_logging=yes
     AM_CONDITIONAL(WITH_LOGGING, true)
@@ -481,16 +481,16 @@ int main() { return 0; }
 CPPFLAGS="$acx_cppflags_safe"
 
 AM_CONDITIONAL(WITH_AGENT_PP_THREADPOOL,false)
-AX_CHECK_LIB_FLAGS([agent++], [], [
+AX_CHECK_LIB_FLAGS([agent++], [], [AC_LANG_SOURCE([
 NS_AGENT Timer timer;
 timer.get_life();
-], [
+])], [AC_LANG_SOURCE([
 AC_INCLUDES_DEFAULT
 $acx_include_sockets
 
 #include <agent_pp/agent++.h>
 #include <agent_pp/tools.h>
-  ], [agent++-3 >= 3.5.31], [
+  ])], [agent++-3 >= 3.5.31], [
     WITH_LIBAGENT=1
     AC_LIB_APPENDTOVAR([LINKFLAGS], ${LIBS_AGENT})
     AC_LIB_APPENDTOVAR([CLIBFLAGS], ${INC_AGENT})
@@ -498,7 +498,7 @@ $acx_include_sockets
 
     AC_MSG_CHECKING([if libagent++ is built with thread support])
     CPPFLAGS="$CPPFLAGS $CLIBFLAGS"
-    AC_COMPILE_IFELSE([
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([
     AC_INCLUDES_DEFAULT
     $acx_include_sockets
 
@@ -509,13 +509,13 @@ $acx_include_sockets
 #endif
 
 int main() { return 0; }
-      ], [
+      ])], [
         AC_MSG_RESULT([yes])
         acx_libagent_threads=yes
 
         AC_MSG_CHECKING([if libagent++ is built with threadpool support])
         CPPFLAGS="$CPPFLAGS $CLIBFLAGS"
-        AC_COMPILE_IFELSE([
+        AC_COMPILE_IFELSE([AC_LANG_SOURCE([
         AC_INCLUDES_DEFAULT
         $acx_include_sockets
 
@@ -526,7 +526,7 @@ int main() { return 0; }
 #endif
 
 int main() { return 0; }
-          ], [
+          ])], [
             AC_MSG_RESULT([yes])
             acx_libagent_threadpool=yes
             AM_CONDITIONAL(WITH_AGENT_PP_THREADPOOL,true)
@@ -558,7 +558,7 @@ AX_CHECK_LIB_FLAGS([statgrab], [], [sg_init(0)], [
 AC_MSG_CHECKING([if libstatgrab is built with thread support])
 acx_cppflags_safe="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $CLIBFLAGS"
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 AC_INCLUDES_DEFAULT
 
 #include <statgrab.h>
@@ -567,7 +567,7 @@ AC_INCLUDES_DEFAULT
 #endif
 
 int main() { return 0; }
-  ], [
+  ])], [
     AC_MSG_RESULT([yes])
     acx_libstatgrab_threads=yes
   ], [
@@ -577,9 +577,9 @@ int main() { return 0; }
 )
 CPPFLAGS="$acx_cppflags_safe"
 
-AX_CHECK_LIB_FLAGS([confuse], [], [cfg_init(NULL, 0)], [
+AX_CHECK_LIB_FLAGS([confuse], [], [cfg_init(NULL, 0)], [AC_LANG_SOURCE([
 #include <confuse.h>
-  ], [libconfuse >= 2.7], [
+  ])], [libconfuse >= 2.7], [
     WITH_LIBCONFUSE=1
     AC_LIB_APPENDTOVAR([LINKFLAGS], ${LIBS_CONFUSE})
     AC_LIB_APPENDTOVAR([CLIBFLAGS], ${INC_CONFUSE})
@@ -602,11 +602,11 @@ AS_IF([test "x$acx_libsnmp_logging" = "xyes"], [
   )]
 )
 
-AS_IF([test "x$WITH_LIBLOG4CPLUS" = "x1"], [
+AS_IF([test "x$WITH_LIBLOG4CPLUS" = "x1"], [AC_LANG_SOURCE([
   AC_MSG_CHECKING([if liblog4cplus is built with thread support])
   acx_cppflags_safe="$CPPFLAGS"
   CPPFLAGS="$CPPFLAGS $CLIBFLAGS"
-  AC_COMPILE_IFELSE([
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   AC_INCLUDES_DEFAULT
 
 #include <log4cplus/config.hxx>
@@ -615,7 +615,7 @@ AS_IF([test "x$WITH_LIBLOG4CPLUS" = "x1"], [
 #endif
 
   int main() { return 0; }
-    ], [
+    ])], [
       AC_MSG_RESULT([yes])
       acx_liblog4cplus_threads=yes
     ], [
@@ -624,7 +624,7 @@ AS_IF([test "x$WITH_LIBLOG4CPLUS" = "x1"], [
     ]
   )
   CPPFLAGS="$acx_cppflags_safe"
-])
+])])
 
 AM_CONDITIONAL(WITH_BUNDLED_LIBJSON,false)
 AM_CONDITIONAL(WITH_EXTERNAL_COMMANDS,false)

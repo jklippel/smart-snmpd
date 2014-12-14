@@ -26,7 +26,7 @@ AC_DEFUN([AX_CXX_HEADER_STDCXX_TR1], [
   AC_CACHE_CHECK(for ISO C++ TR1 include files,
   ax_cv_cxx_stdcxx_tr1,
   [AC_LANG_PUSH([C++])
-  AC_COMPILE_IFELSE(AC_LANG_PROGRAM([
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([AC_LANG_PROGRAM([
   #include <tr1/array>
   #include <tr1/ccomplex>
   #include <tr1/cctype>
@@ -54,7 +54,7 @@ AC_DEFUN([AX_CXX_HEADER_STDCXX_TR1], [
   #include <tr1/unordered_set>
   #include <tr1/unordered_map>
   #include <tr1/utility>
-  ]),
+  ])])],
   ax_cv_cxx_stdcxx_tr1=yes, ax_cv_cxx_stdcxx_tr1=no)
   AC_LANG_POP([C++])
   ])

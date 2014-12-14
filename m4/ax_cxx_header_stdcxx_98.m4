@@ -26,7 +26,7 @@ AC_DEFUN([AX_CXX_HEADER_STDCXX_98], [
   AC_CACHE_CHECK(for ISO C++ 98 include files,
   ax_cv_cxx_stdcxx_98,
   [AC_LANG_PUSH([C++])
-  AC_COMPILE_IFELSE(AC_LANG_PROGRAM([
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([AC_LANG_PROGRAM([
     #include <cassert>
     #include <cctype>
     #include <cerrno>
@@ -76,7 +76,7 @@ AC_DEFUN([AX_CXX_HEADER_STDCXX_98], [
     #include <utility>
     #include <valarray>
     #include <vector>
-  ]),
+  ])])],
   ax_cv_cxx_stdcxx_98=yes, ax_cv_cxx_stdcxx_98=no)
   AC_LANG_POP([C++])
   ])

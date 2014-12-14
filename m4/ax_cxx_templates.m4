@@ -27,9 +27,9 @@ AC_DEFUN([AX_CXX_TEMPLATES],
 [AC_CACHE_CHECK(whether the compiler supports basic templates,
 ax_cv_cxx_templates,
 [AC_LANG_PUSH([C++])
- AC_COMPILE_IFELSE(AC_LANG_PROGRAM([template<class T> class A {public:A(){}};
+ AC_COMPILE_IFELSE([AC_LANG_SOURCE([AC_LANG_PROGRAM([template<class T> class A {public:A(){}};
 template<class T> void f(const A<T>& ){}],[
-A<double> d; A<int> i; f(d); f(i); return 0;]),
+A<double> d; A<int> i; f(d); f(i); return 0;])])],
  ax_cv_cxx_templates=yes, ax_cv_cxx_templates=no)
  AC_LANG_POP([C++])
 ])

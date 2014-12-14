@@ -28,8 +28,8 @@ AC_DEFUN([AX_CXX_NAMESPACES],
 [AC_CACHE_CHECK(whether the compiler implements namespaces,
 ax_cv_cxx_namespaces,
 [AC_LANG_PUSH([C++])
- AC_COMPILE_IFELSE(AC_LANG_PROGRAM([namespace Outer { namespace Inner { int i = 0; }}],
-                                   [using namespace Outer::Inner; return i;]),
+ AC_COMPILE_IFELSE([AC_LANG_SOURCE([AC_LANG_PROGRAM([namespace Outer { namespace Inner { int i = 0; }}],
+                                   [using namespace Outer::Inner; return i;])])],
  ax_cv_cxx_namespaces=yes, ax_cv_cxx_namespaces=no)
  AC_LANG_POP([C++])
 ])

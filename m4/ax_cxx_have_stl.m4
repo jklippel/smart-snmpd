@@ -28,12 +28,12 @@ AC_DEFUN([AX_CXX_HAVE_STL],
 ax_cv_cxx_have_stl,
 [AC_REQUIRE([AX_CXX_NAMESPACES])
  AC_LANG_PUSH([C++])
- AC_COMPILE_IFELSE(AC_LANG_PROGRAM([#include <list>
+ AC_COMPILE_IFELSE([AC_LANG_SOURCE([AC_LANG_PROGRAM([#include <list>
 #include <deque>
 #ifdef HAVE_NAMESPACES
 using namespace std;
 #endif],[list<int> x; x.push_back(5);
-list<int>::iterator iter = x.begin(); if (iter != x.end()) ++iter; return 0;]),
+list<int>::iterator iter = x.begin(); if (iter != x.end()) ++iter; return 0;])])],
  ax_cv_cxx_have_stl=yes, ax_cv_cxx_have_stl=no)
  AC_LANG_POP([C++])
 ])
